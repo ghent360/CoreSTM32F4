@@ -1,5 +1,5 @@
 PROCESSOR = STM32F4
-
+VARIANT ?= BIGTREE_SKR_PRO_1v1
 
 BUILD_DIR ?= ./build
 FREERTOS_DIR ?= ./FreeRTOS
@@ -40,70 +40,151 @@ include $(MAKE_DIR)/RepRapFirmware.mk
 
 ifeq ($(BUILD),Debug)
 	DEBUG_FLAGS = -Os -g -DSTM32_DEBUG
-        $(info - Build: Debug) 
+    $(info - Build: Debug) 
 else
 	DEBUG_FLAGS = -Os
-        $(info - Build: Release)
+    $(info - Build: Release)
 endif
 	
 
 #Linker script to avoid built in Bootloader
-LINKER_SCRIPT_BASE = $(CORE_DIR)/variants/BIGTREE_SKR_PRO_1v1/ldscript
-
-
+LINKER_SCRIPT_BASE = $(CORE_DIR)/variants/$(VARIANT)/ldscript
 
 #Path to the linker Script
 LINKER_SCRIPT  = $(LINKER_SCRIPT_BASE).ld
 $(info  - Linker Script used: $(LINKER_SCRIPT))
 
+ifeq ($(VARIANT), PRNTR_Vx)
+	VARIANT_DEFINES = -DARDUINO_PRNTR_V2
+else
+	VARIANT_DEFINES = -DARDUINO_BIGTREE_SKR_PRO
+endif
 
 #Flags common for Core in c and c++
-#FLAGS  = -D__$(PROCESSOR)__ -D_XOPEN_SOURCE -DENABLE_UART3 -DSTM32F4 -DSTM32F407xx -DSTM32F40_41xxx -DSTM32F407_5ZX -DSTM32F4xx
-FLAGS  = -D__$(PROCESSOR)__ -D_XOPEN_SOURCE -DSTM32F4 -DSTM32F407xx -DSTM32F40_41xxx -DSTM32F407_5ZX -DSTM32F4xx
+#FLAGS  = \
+#	-D__$(PROCESSOR)__ \
+#	-D_XOPEN_SOURCE \
+#	-DENABLE_UART3 \
+#	-DSTM32F4 \
+#	-DSTM32F407xx \
+#	-DSTM32F40_41xxx \
+#	-DSTM32F407_5ZX \
+#	-DSTM32F4xx
+
+FLAGS  = \
+	-D__$(PROCESSOR)__ \
+	-D_XOPEN_SOURCE \
+	-DSTM32F4 \
+	-DSTM32F407xx \
+	-DSTM32F40_41xxx \
+	-DSTM32F407_5ZX \
+	-DSTM32F4xx
+
 # UART configuration
-FLAGS  += -DHAVE_HWSERIAL1 -DHAVE_HWSERIAL3 -DHAVE_HWSERIAL6
+FLAGS  += \
+	-DHAVE_HWSERIAL1 \
+	-DHAVE_HWSERIAL3 \
+	-DHAVE_HWSERIAL6
 
 #lpcopen Defines
 FLAGS += -DCORE_M4
 #RTOS + enable mods to RTOS+TCP for RRF
-FLAGS += -DRTOS -DFREERTOS_USED -DUSBCON -DUSBD_USE_CDC -DUSBD_VID=0x0483 -DTIM_IRQ_PRIO=13 -DUSB_PRODUCT=\"STM32F407ZG\" -DVECT_TAB_OFFSET=0x8000
-FLAGS += -DDEVICE_USBDEVICE=1 -DTARGET_STM32F4 -DARDUINO_ARCH_STM32 -DARDUINO_BIGTREE_SKR_PRO -DHAL_UART_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
-FLAGS +=  -Wall -c -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections
-FLAGS += -nostdlib -Wdouble-promotion -fsingle-precision-constant -fstack-usage
+FLAGS += \
+	-DRTOS \
+	-DFREERTOS_USED \
+	-DUSBCON \
+	-DUSBD_USE_CDC \
+	-DUSBD_VID=0x0483 \
+	-DTIM_IRQ_PRIO=13 \
+	-DUSB_PRODUCT=\"STM32F407ZG\" \
+	-DVECT_TAB_OFFSET=0x8000
+
+FLAGS += \
+	-DDEVICE_USBDEVICE=1 \
+	-DTARGET_STM32F4 \
+	-DARDUINO_ARCH_STM32 \
+	-DHAL_UART_MODULE_ENABLED \
+	-DHAL_PCD_MODULE_ENABLED
+
+FLAGS += $(VARIANT_DEFINES)
+
+FLAGS += \
+	-Wall \
+	-c \
+	-mfpu=fpv4-sp-d16 \
+	-mfloat-abi=hard \
+	-mcpu=cortex-m4 \
+	-mthumb \
+	-ffunction-sections \
+	-fdata-sections
+
+FLAGS += \
+	-nostdlib \
+	-Wdouble-promotion \
+	-fsingle-precision-constant \
+	-fstack-usage
+
 #FLAGS += -Wfloat-equal
 #FLAGS += -Wundef
 FLAGS += $(DEBUG_FLAGS)
 FLAGS += -MMD -MP 
 
 ifeq ($(NETWORK), ETHERNET)
-        $(info  - Networking: Ethernet)
-        FLAGS += -DLPC_NETWORKING
+    $(info  - Networking: Ethernet)
+    FLAGS += -DLPC_NETWORKING
 else ifeq ($(NETWORK), ESP8266WIFI)
-        $(info  - Networking: ESP8266 WIFI) 
-        FLAGS += -DESP8266WIFI
+    $(info  - Networking: ESP8266 WIFI) 
+    FLAGS += -DESP8266WIFI
 else ifeq ($(NETWORK), SBC)
-        $(info  - SBC Interface Enabled)
-        FLAGS += -DLPC_SBC
+    $(info  - SBC Interface Enabled)
+    FLAGS += -DLPC_SBC
 else
-        $(info  - Networking: None)
+    $(info  - Networking: None)
 endif
 
 ifeq ($(TMC22XX), true)
-        $(info  - Smart Drivers: TMC22XX)
-        FLAGS += -DSUPPORT_TMC22xx
+    $(info  - Smart Drivers: TMC22XX)
+    FLAGS += -DSUPPORT_TMC22xx
 else
-        $(info  - Smart Drivers: None)
+    $(info  - Smart Drivers: None)
 endif
 
-CFLAGS   = $(FLAGS) -std=gnu11 -fgnu89-inline -Dnoexcept=
-CXXFLAGS = $(FLAGS) -std=gnu++17 -fno-threadsafe-statics -fexceptions -fno-rtti -Wno-register
-CXXFLAGS_RRFL = $(FLAGS) -std=gnu++17 -fno-threadsafe-statics -fno-exceptions -fno-rtti -Wno-register
-CXXFLAGS_CORE = $(FLAGS) -std=gnu++17 -fno-threadsafe-statics -fno-exceptions -fno-rtti -Wno-register
+CFLAGS   = \
+	$(FLAGS) \
+	-std=gnu11 \
+	-fgnu89-inline \
+	-Dnoexcept=
 
+CXXFLAGS = \
+	$(FLAGS) \
+	-std=gnu++17 \
+	-fno-threadsafe-statics \
+	-fexceptions \
+	-fno-rtti \
+	-Wno-register
+
+CXXFLAGS_RRFL = \
+	$(FLAGS) \
+	-std=gnu++17 \
+	-fno-threadsafe-statics \
+	-fno-exceptions \
+	-fno-rtti \
+	-Wno-register
+
+CXXFLAGS_CORE = \
+	$(FLAGS) \
+	-std=gnu++17 \
+	-fno-threadsafe-statics \
+	-fno-exceptions \
+	-fno-rtti \
+	-Wno-register
 
 #all Includes (RRF + Core)
-INCLUDES = $(CORE_INCLUDES) $(RRFLIBRARIES_INCLUDES) $(RRF_INCLUDES) $(RRFLIBC_INCLUDES)
-
+INCLUDES = \
+	$(CORE_INCLUDES) \
+	$(RRFLIBRARIES_INCLUDES) \
+	$(RRF_INCLUDES) \
+	$(RRFLIBC_INCLUDES)
 
 DEPS = $(CORE_OBJS:.o=.d)
 DEPS += $(RRF_OBJS:.o=.d)
@@ -134,7 +215,46 @@ $(BUILD_DIR)/libRRFLibraries.a: $(RRFLIBRARIES_OBJS)
 $(BUILD_DIR)/$(OUTPUT_NAME).elf: $(BUILD_DIR)/libSTMCore.a $(BUILD_DIR)/libRRFLibraries.a $(RRFLIBC_OBJS) $(RRF_OBJS)
 	@echo "\nCreating $(OUTPUT_NAME).bin"
 	$(V)$(MKDIR) $(dir $@)
-	$(V)$(LD) -L$(BUILD_DIR)/ -L$(CORE_DIR)/variants/BIGTREE_SKR_PRO_1v1/ -L$(CORE_DIR)/CMSIS/CMSIS/DSP/Lib/GCC --specs=nosys.specs -Xlinker -z -Xlinker muldefs -Os -Wl,--fatal-warnings -fmerge-all-constants -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mcpu=cortex-m4 -mthumb -T$(LINKER_SCRIPT) -Wl,-Map,$(BUILD_DIR)/$(OUTPUT_NAME).map -o $(BUILD_DIR)/$(OUTPUT_NAME).elf -Wl,--cref -Wl,--check-sections -Wl,--gc-sections,--relax -Wl,--entry=Reset_Handler -Wl,--unresolved-symbols=report-all -Wl,--warn-common -Wl,--warn-unresolved-symbols -Wl,--defsym=LD_MAX_SIZE=1048576 -Wl,--defsym=LD_MAX_DATA_SIZE=196608 -Wl,--defsym=LD_FLASH_OFFSET=0x0 -Wl,--start-group $(BUILD_DIR)/$(CORE_DIR)/cores/arduino/syscalls.o $(RRFLIBC_OBJS) -lSTMCore $(RRF_OBJS) -lRRFLibraries -larm_cortexM4l_math -lc -lm -lgcc -lstdc++ -Wl,--end-group
+	$(V)$(LD) \
+		-L$(BUILD_DIR)/ \
+		-L$(CORE_DIR)/variants/$(VARIANT)/ \
+		-L$(CORE_DIR)/CMSIS/CMSIS/DSP/Lib/GCC \
+		--specs=nosys.specs \
+		-Xlinker \
+		-z \
+		-Xlinker muldefs \
+		-Os \
+		-Wl,--fatal-warnings \
+		-fmerge-all-constants \
+		-mfpu=fpv4-sp-d16 \
+		-mfloat-abi=hard \
+		-mcpu=cortex-m4 \
+		-mthumb \
+		-T$(LINKER_SCRIPT) \
+		-Wl,-Map,$(BUILD_DIR)/$(OUTPUT_NAME).map \
+		-o $(BUILD_DIR)/$(OUTPUT_NAME).elf \
+		-Wl,--cref \
+		-Wl,--check-sections \
+		-Wl,--gc-sections,--relax \
+		-Wl,--entry=Reset_Handler \
+		-Wl,--unresolved-symbols=report-all \
+		-Wl,--warn-common \
+		-Wl,--warn-unresolved-symbols \
+		-Wl,--defsym=LD_MAX_SIZE=1048576 \
+		-Wl,--defsym=LD_MAX_DATA_SIZE=196608 \
+		-Wl,--defsym=LD_FLASH_OFFSET=0x0 \
+		-Wl,--start-group \
+			$(BUILD_DIR)/$(CORE_DIR)/cores/arduino/syscalls.o \
+			$(RRFLIBC_OBJS) \
+			-lSTMCore \
+			$(RRF_OBJS) \
+			-lRRFLibraries \
+			-larm_cortexM4l_math \
+			-lc \
+			-lm \
+			-lgcc \
+			-lstdc++ \
+		-Wl,--end-group
 	$(V)$(OBJCOPY) --strip-unneeded -O binary $(BUILD_DIR)/$(OUTPUT_NAME).elf $(BUILD_DIR)/$(OUTPUT_NAME).bin
 	$(V)$(SIZE) $(BUILD_DIR)/$(OUTPUT_NAME).elf
 	-@$(MAKE_DIR)/staticMemStats.sh $(BUILD_DIR)/$(OUTPUT_NAME).elf
