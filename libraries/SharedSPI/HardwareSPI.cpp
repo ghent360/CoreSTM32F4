@@ -51,7 +51,6 @@ static inline void flushRxFifo(SPI_HandleTypeDef *hspi) noexcept
     }
     //if (cnt > 0)
         //debugPrintf("Flushed cnt %d\n", cnt);
-
 }
 
 void HardwareSPI::flushRx() noexcept

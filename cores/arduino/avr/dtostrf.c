@@ -32,7 +32,7 @@ char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
 
   // Handle negative numbers
   uint8_t negative = 0;
-  if (val < 0.0) {
+  if (val < (double)0.0) {
     negative = 1;
     val = -val;
   }
@@ -40,7 +40,7 @@ char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
   for (int i = 0; i < prec; ++i) {
-    rounding /= 10.0;
+    rounding /= (double)10.0;
   }
 
   val += rounding;
@@ -53,7 +53,7 @@ char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
   unsigned long dec_part = 0;
   double decade = 1.0;
   for (int i = 0; i < prec; i++) {
-    decade *= 10.0;
+    decade *= (double)10.0;
   }
   remainder *= decade;
   dec_part = (int)remainder;

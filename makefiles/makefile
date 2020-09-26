@@ -96,12 +96,14 @@ FLAGS += \
 	-DUSBD_USE_CDC \
 	-DUSBD_VID=0x0483 \
 	-DTIM_IRQ_PRIO=13 \
-	-DUSB_PRODUCT=\"STM32F407ZG\" \
-	-DVECT_TAB_OFFSET=0x8000
+	-DUSB_PRODUCT=\"STM32F407VE\"
+
+#	-DVECT_TAB_OFFSET=0x8000
 
 FLAGS += \
 	-DDEVICE_USBDEVICE=1 \
 	-DTARGET_STM32F4 \
+	-DHSE_VALUE=8000000 \
 	-DARDUINO_ARCH_STM32 \
 	-DHAL_UART_MODULE_ENABLED \
 	-DHAL_PCD_MODULE_ENABLED
@@ -240,7 +242,7 @@ $(BUILD_DIR)/$(OUTPUT_NAME).elf: $(BUILD_DIR)/libSTMCore.a $(BUILD_DIR)/libRRFLi
 		-Wl,--unresolved-symbols=report-all \
 		-Wl,--warn-common \
 		-Wl,--warn-unresolved-symbols \
-		-Wl,--defsym=LD_MAX_SIZE=1048576 \
+		-Wl,--defsym=LD_MAX_SIZE=524288 \
 		-Wl,--defsym=LD_MAX_DATA_SIZE=196608 \
 		-Wl,--defsym=LD_FLASH_OFFSET=0x0 \
 		-Wl,--start-group \
@@ -305,7 +307,7 @@ cleanrrf:
 	-rm -f $(RRF_OBJS)  $(BUILD_DIR)/libRRFLibraries.a
 	
 cleancore:
-	-rm -f $(CORE_OBJS) $(BUILD_DIR)/libLPCCore.a
+	-rm -f $(CORE_OBJS) $(BUILD_DIR)/libSTMCore.a
 
 cleanrrflibraries:
 	-rm -f $(RRFLIBRARIES_OBJS) $(BUILD_DIR)/libRRFLibraries.a

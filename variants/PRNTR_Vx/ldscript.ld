@@ -59,9 +59,11 @@ _Min_Stack_Size = 0x400; /* required amount of stack */
 /* Specify the memory areas */
 MEMORY
 {
-RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
-CCMRAM (rw)      : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 512K
+VECTOR (rx)   : ORIGIN = 0x08000000, LENGTH = 16K
+RESETDATA (rx): ORIGIN = 0x0800C000, LENGTH = 16K
+FLASH (rx)    : ORIGIN = 0x08010000, LENGTH = 512K - 64K
+RAM (xrw)     : ORIGIN = 0x20000000, LENGTH = 128K
+CCMRAM (rw)   : ORIGIN = 0x10000000, LENGTH = 64K
 }
 
 /* Define output sections */
@@ -73,10 +75,16 @@ SECTIONS
     . = ALIGN(4);
     KEEP(*(.isr_vector)) /* Startup code */
     . = ALIGN(4);
-  } >FLASH
-
+  } >VECTOR
+  .reset_data (NOLOAD) :
+  {
+    . = ALIGN(4);
+    __reset_data_start = .;
+    KEEP(*(.reset_data))
+    . = ALIGN(4);
+  } >RESETDATA
   /* The program code and other data goes into FLASH */
-  .text :
+  .text ALIGN(4):
   {
     . = ALIGN(4);
     *(.text)           /* .text sections (code) */
@@ -93,7 +101,7 @@ SECTIONS
   } >FLASH
 
   /* Constant data goes into FLASH */
-  .rodata :
+  .rodata ALIGN(4):
   {
     . = ALIGN(4);
     *(.rodata)         /* .rodata sections (constants, strings, etc.) */
@@ -183,15 +191,13 @@ SECTIONS
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
   {
-    . = ALIGN(8);
+    . = ALIGN(4);
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
-    . = ALIGN(8);
+    . = ALIGN(4);
   } >RAM
-
-
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
@@ -203,5 +209,3 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 }
-
-
