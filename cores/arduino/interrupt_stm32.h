@@ -5,8 +5,6 @@
 #include <stdint.h>
 //#include "chip.h"
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -14,35 +12,35 @@ extern "C" {
 typedef uint32_t irqflags_t;
 #define cpu_irq_is_enabled()    (__get_PRIMASK() == 0)
 
-
 #define cpu_irq_enable()                       \
     do {                                       \
         __DMB();                               \
-		__enable_irq();                        \
-	} while (0)
+	__enable_irq();                        \
+    } while (0)
+
 # define cpu_irq_disable()                     \
-	do {                                       \
-		__disable_irq();                       \
-		__DMB();                               \
-	} while (0)
+    do {                                       \
+	__disable_irq();                       \
+	__DMB();                               \
+    } while (0)
 
 
 static inline irqflags_t cpu_irq_save(void) noexcept
 {
-	irqflags_t flags = cpu_irq_is_enabled();
-	cpu_irq_disable();
-	return flags;
+    irqflags_t flags = cpu_irq_is_enabled();
+    cpu_irq_disable();
+    return flags;
 }
 
 static inline bool cpu_irq_is_enabled_flags(irqflags_t flags) noexcept
 {
-	return (flags);
+    return (flags);
 }
 
 static inline void cpu_irq_restore(irqflags_t flags) noexcept
 {
-	if (cpu_irq_is_enabled_flags(flags))
-		cpu_irq_enable();
+    if (cpu_irq_is_enabled_flags(flags))
+        cpu_irq_enable();
 }
     
 // Return true if we are in any interrupt service routine
@@ -68,40 +66,39 @@ static inline bool inInterrupt() noexcept
 // Get the base priority and shut out interrupts lower than or equal to a specified priority
 inline uint32_t ChangeBasePriority(uint32_t prio) noexcept
 {
-        const uint32_t oldPrio = __get_BASEPRI();
-        __set_BASEPRI_MAX(prio << (8 - __NVIC_PRIO_BITS));
-        return oldPrio;
+    const uint32_t oldPrio = __get_BASEPRI();
+    __set_BASEPRI_MAX(prio << (8 - __NVIC_PRIO_BITS));
+    return oldPrio;
 }
 
 // Restore the base priority following a call to ChangeBasePriority
 inline void RestoreBasePriority(uint32_t prio) noexcept
 {
-        __set_BASEPRI(prio);
+    __set_BASEPRI(prio);
 }
 
 // Set the base priority when we are not interested in the existing value i.e. definitely in non-interrupt code
 inline void SetBasePriority(uint32_t prio) noexcept
 {
-        __set_BASEPRI(prio << (8 - __NVIC_PRIO_BITS));
+    __set_BASEPRI(prio << (8 - __NVIC_PRIO_BITS));
 }    
 #ifdef __cplusplus
-}
+} // extern "C"
 
 // Atomic section locker, alternative to InterruptCriticalSectionLocker (is safe to call from within an ISR, and may be faster)
 class AtomicCriticalSectionLocker
 {
 public:
-        AtomicCriticalSectionLocker() noexcept : flags(cpu_irq_save())
-        {
-        }
+    AtomicCriticalSectionLocker() noexcept : flags(cpu_irq_save())
+    {
+    }
 
-        ~AtomicCriticalSectionLocker()
-        {
-                cpu_irq_restore(flags);
-        }
-
+    ~AtomicCriticalSectionLocker()
+    {
+        cpu_irq_restore(flags);
+    }
 private:
-        irqflags_t flags;
+    irqflags_t flags;
 };
 
 #endif

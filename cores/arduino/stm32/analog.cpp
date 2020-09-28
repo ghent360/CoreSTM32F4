@@ -35,7 +35,6 @@
   *
   ******************************************************************************
   */
-
 #include "stm32_def.h"
 #include "analog.h"
 #include "HardwareTimer.h"

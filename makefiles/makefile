@@ -318,6 +318,6 @@ distclean:
 	-rm -rf $(BUILD_DIR)/ 
 
 upload:
-	ST-LINK_CLI.exe -c SWD -P "$(BUILD_DIR)/firmware.bin" 0x8008000 -ClrBP -NoPrompt -Rst -Run
+	STM32_Programmer_CLI -c port=SWD -w "$(BUILD_DIR)/firmware.bin" 0x8008000 -v -Rst -Run
 
 .PHONY: all firmware clean distclean $(BUILD_DIR)/$(OUTPUT_NAME).elf
