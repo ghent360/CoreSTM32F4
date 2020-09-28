@@ -39,7 +39,7 @@ include $(MAKE_DIR)/RRFLibraries.mk
 include $(MAKE_DIR)/RepRapFirmware.mk
 
 ifeq ($(BUILD),Debug)
-	DEBUG_FLAGS = -Os -g -DSTM32_DEBUG
+	DEBUG_FLAGS = -Os -g -DSTM32_DEBUG -DDEBUG_IRQ_HANDLERS
     $(info - Build: Debug) 
 else
 	DEBUG_FLAGS = -Os
@@ -82,9 +82,13 @@ FLAGS  = \
 
 # UART configuration
 FLAGS  += \
-	-DHAVE_HWSERIAL1 \
-	-DHAVE_HWSERIAL3 \
-	-DHAVE_HWSERIAL6
+    -DSUPPORT_CONFIGURABLE_UART \
+	-DSUPPORT_ANALOG_OUT \
+	-DSUPPORT_HYPRID_PWM
+
+#	-DHAVE_HWSERIAL1 \
+#	-DHAVE_HWSERIAL3 \
+#	-DHAVE_HWSERIAL6
 
 #lpcopen Defines
 FLAGS += -DCORE_M4
@@ -318,6 +322,6 @@ distclean:
 	-rm -rf $(BUILD_DIR)/ 
 
 upload:
-	STM32_Programmer_CLI -c port=SWD -w "$(BUILD_DIR)/firmware.bin" 0x8008000 -v -Rst -Run
+	STM32_Programmer_CLI -c port=SWD -w "$(BUILD_DIR)/firmware.bin" 0x8000000 -v -Rst -Run
 
 .PHONY: all firmware clean distclean $(BUILD_DIR)/$(OUTPUT_NAME).elf
