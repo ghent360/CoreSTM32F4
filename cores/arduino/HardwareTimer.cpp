@@ -45,6 +45,11 @@ IRQn_Type getTimerCCIrq(TIM_TypeDef *tim);
   */
 HardwareTimer::HardwareTimer(TIM_TypeDef *instance)
 {
+#ifdef USE_TIM6_TIMEBASE
+  if (instance == TIM6) {
+    Error_Handler();
+  }
+#endif  
   uint32_t index = get_timer_index(instance);
   if (index == UNKNOWN_TIMER) {
     Error_Handler();
@@ -1053,6 +1058,16 @@ extern "C" {
 
   void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
+#ifdef USE_TIM6_TIMEBASE
+    if (htim->Instance == TIM6) {
+      extern uint64_t g_ms_ticks;
+      const irqflags_t flags = cpu_irq_save();	// save and disable interrupts, because under RTOS the systick interrupt is low priority
+      g_ms_ticks++;
+      cpu_irq_restore(flags);
+      HAL_IncTick();
+      return;
+    }
+#endif    
     HardwareTimer::updateCallback(htim);
   }
 
@@ -1153,6 +1168,13 @@ extern "C" {
 #endif //TIM5_BASE
 
 #if defined(TIM6_BASE)
+#ifdef USE_TIM6_TIMEBASE
+  extern TIM_HandleTypeDef        h_tim6;
+  void TIM6_IRQHandler(void)
+  {
+    HAL_TIM_IRQHandler(&h_tim6);
+  }
+#else // !defined(USE_TIM6_TIMEBASE)
   /**
     * @brief  TIM6 IRQHandler
     * @param  None
@@ -1164,6 +1186,7 @@ extern "C" {
       HAL_TIM_IRQHandler(&HardwareTimer_Handle[TIMER6_INDEX]->handle);
     }
   }
+#endif // USE_TIM6_TIMEBASE
 #endif //TIM6_BASE
 
 #if defined(TIM7_BASE)

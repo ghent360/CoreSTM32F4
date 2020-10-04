@@ -43,7 +43,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-static volatile uint64_t g_ms_ticks = 0;
+volatile uint64_t g_ms_ticks = 0;
 /**
   * @brief  Function called to read the current micro second
   * @param  None
@@ -70,8 +70,7 @@ uint32_t getCurrentMicros(void)
   */
 uint32_t getCurrentMillis(void)
 {
-  //return HAL_GetTick();
-  return (uint32_t) g_ms_ticks;
+  return HAL_GetTick();
 }
 
 uint64_t getCurrentMillis64(void)
@@ -82,11 +81,10 @@ uint64_t getCurrentMillis64(void)
   return ret;
 }
 
-
+#ifndef USE_TIM6_TIMEBASE
 
 void noOsSystickHandler()
 {
-
 }
 
 void osSystickHandler() __attribute__((weak, alias("noOsSystickHandler")));
@@ -106,6 +104,7 @@ void SysTick_Handler(void)
   cpu_irq_restore(flags);
 }
 
+#endif // USE_TIM6_TIMEBASE
 
 /**
   * @brief  Enable the specified clock if not already set
