@@ -262,7 +262,9 @@ $(BUILD_DIR)/$(OUTPUT_NAME).elf: $(BUILD_DIR)/libSTMCore.a $(BUILD_DIR)/libRRFLi
 			-lgcc \
 			-lstdc++ \
 		-Wl,--end-group
-	$(V)$(OBJCOPY) --strip-unneeded -O binary $(BUILD_DIR)/$(OUTPUT_NAME).elf $(BUILD_DIR)/$(OUTPUT_NAME).bin
+	$(V)$(OBJCOPY) --strip-unneeded -O binary \
+		$(BUILD_DIR)/$(OUTPUT_NAME).elf \
+		$(BUILD_DIR)/$(OUTPUT_NAME).bin
 	$(V)$(SIZE) $(BUILD_DIR)/$(OUTPUT_NAME).elf
 	-@$(MAKE_DIR)/staticMemStats.sh $(BUILD_DIR)/$(OUTPUT_NAME).elf
 	
