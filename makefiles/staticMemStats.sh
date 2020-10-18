@@ -1,5 +1,4 @@
 #!/bin/sh
-#MEMSCR='BEGIN {FS = " "; main=0;ram0=0;other=0} {if($1>0x20000000){main+=$2} else if($1>=0x10000000 && $1<0x20000000){ram0+=$2;}else{other+=$2};} END{print "\n\n--------Static Memory Totals-------\n\nMemory  \t  Bytes (dec)\n\nMain      \t  ", main, " / 131072\nAHBRAM   \t  ", ram0, " / 65536\nOther     \t  ", other;}'
 read -r -d '' MEMSCR << EOM
 BEGIN {
     FS = " ";
