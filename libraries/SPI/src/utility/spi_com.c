@@ -37,7 +37,7 @@
   */
 #include "core_debug.h"
 #include "stm32_def.h"
-#include "utility/spi_com.h"
+#include "spi_com.h"
 #include "PinAF_STM32F1.h"
 #include "pinconfig.h"
 #include "stm32yyxx_ll_spi.h"

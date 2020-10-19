@@ -32,6 +32,7 @@ CORE_SRC_DIRS += \
 CORE_SRC_DIRS += \
 	variants/$(VARIANT) \
 	libraries/ConfigurableUART \
+    libraries/SPI/src/utility \
 	libraries/SharedSPI \
 	libraries/PWM
 

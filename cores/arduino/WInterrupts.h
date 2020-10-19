@@ -24,7 +24,7 @@
 
 #include <functional>
 
-typedef std::function<void(void) NOEXCEPT> callback_function_t;
+typedef std::function<void(void)> callback_function_t;
 void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) NOEXCEPT;
 
 struct CallbackParameter

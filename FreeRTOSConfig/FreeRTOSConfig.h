@@ -30,10 +30,12 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
+#ifndef NOEXCEPT
 #ifdef __cplusplus
 # define NOEXCEPT    noexcept
 #else
 # define NOEXCEPT
+#endif
 #endif
 
 /* Atmel library includes. */

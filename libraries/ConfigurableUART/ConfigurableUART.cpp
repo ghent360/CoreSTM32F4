@@ -227,7 +227,7 @@ size_t ConfigurableUART::canWrite() NOEXCEPT
 {
     if(serialPort != nullptr)
     {
-        return serialPort->canWrite();
+        return serialPort->availableForWrite();
     }
     return 0;
 }

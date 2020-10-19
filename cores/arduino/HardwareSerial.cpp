@@ -441,6 +441,17 @@ int HardwareSerial::availableForWrite(void) NOEXCEPT
   return tail - head - 1;
 }
 
+size_t HardwareSerial::canWrite() NOEXCEPT
+{
+  tx_buffer_index_t head = _serial.tx_head;
+  tx_buffer_index_t tail = _serial.tx_tail;
+
+  if (head >= tail) {
+    return SERIAL_TX_BUFFER_SIZE - 1 - head + tail;
+  }
+  return tail - head - 1;
+}
+
 void HardwareSerial::flush() NOEXCEPT
 {
   // If we have never written a byte, no need to flush. This special
