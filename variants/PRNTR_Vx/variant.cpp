@@ -198,6 +198,7 @@ WEAK void SystemClock_Config(void)
 
 #ifdef USE_TIM6_TIMEBASE
 TIM_HandleTypeDef        h_tim6;
+extern uint32_t uwTickPrio;
 
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
@@ -206,9 +207,13 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   uint32_t              uwPrescalerValue = 0;
   uint32_t              pFLatency;
 
+  if (TickPriority > 15) {
+    TickPriority = 15;
+  }
   HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority ,0);
   HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
-
+  uwTickPrio = TickPriority;
+  
   __HAL_RCC_TIM6_CLK_ENABLE();
 
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
