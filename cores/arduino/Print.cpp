@@ -260,6 +260,7 @@ extern "C" {
   }
 }
 
+#ifndef NO_PRINTF
 int Print::printf(const char *format, ...) NOEXCEPT
 {
   va_list ap;
@@ -273,6 +274,7 @@ int Print::printf(const __FlashStringHelper *format, ...) NOEXCEPT
   va_start(ap, format);
   return vdprintf((int)this, (const char *)format, ap);
 }
+#endif
 
 // Private Methods /////////////////////////////////////////////////////////////
 

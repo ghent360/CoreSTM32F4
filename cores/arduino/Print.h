@@ -104,8 +104,10 @@ class Print {
     size_t println(const Printable &) NOEXCEPT;
     size_t println(void) NOEXCEPT;
 
+#ifndef NO_PRINTF
     int printf(const char *format, ...) NOEXCEPT;
     int printf(const __FlashStringHelper *format, ...) NOEXCEPT;
+#endif
 
     virtual void flush() NOEXCEPT { /* Empty implementation for backward compatibility */ }
 };
