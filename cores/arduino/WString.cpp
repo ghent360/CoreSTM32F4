@@ -23,6 +23,8 @@
 #include "itoa.h"
 #include "avr/dtostrf.h"
 
+#ifndef DISABLE_ARDUINO_STRING
+
 /*********************************************/
 /*  Constructors                             */
 /*********************************************/
@@ -897,3 +899,5 @@ double String::toDouble(void) const
   }
   return 0;
 }
+
+#endif  // DISABLE_ARDUINO_STRING

@@ -22,6 +22,7 @@
 #include <inttypes.h>
 #include <stdio.h> // for size_t
 #include <stdarg.h> // for printf
+#include <string.h>
 
 #include "WString.h"
 #include "Printable.h"
@@ -75,8 +76,10 @@ class Print {
       return 0;
     }
 
+#ifndef DISABLE_ARDUINO_STRING
     size_t print(const __FlashStringHelper *) NOEXCEPT;
     size_t print(const String &) NOEXCEPT;
+#endif    
     size_t print(const char[]) NOEXCEPT;
     size_t print(char) NOEXCEPT;
     size_t print(unsigned char, int = DEC) NOEXCEPT;
@@ -89,8 +92,10 @@ class Print {
     size_t print(double, int = 2) NOEXCEPT;
     size_t print(const Printable &) NOEXCEPT;
 
+#ifndef DISABLE_ARDUINO_STRING
     size_t println(const __FlashStringHelper *) NOEXCEPT;
     size_t println(const String &s) NOEXCEPT;
+#endif    
     size_t println(const char[]) NOEXCEPT;
     size_t println(char) NOEXCEPT;
     size_t println(unsigned char, int = DEC) NOEXCEPT;

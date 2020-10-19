@@ -130,9 +130,10 @@ class Stream : public Print {
     // returns the number of characters placed in the buffer (0 means no valid data found)
 
     // Arduino String functions to be added here
+#ifndef DISABLE_ARDUINO_STRING
     String readString() NOEXCEPT;
     String readStringUntil(char terminator) NOEXCEPT;
-
+#endif
   protected:
     long parseInt(char ignore) NOEXCEPT
     {

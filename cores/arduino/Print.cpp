@@ -45,6 +45,7 @@ size_t Print::write(const uint8_t *buffer, size_t size) NOEXCEPT
   return n;
 }
 
+#ifndef DISABLE_ARDUINO_STRING
 size_t Print::print(const __FlashStringHelper *ifsh) NOEXCEPT
 {
   return print(reinterpret_cast<const char *>(ifsh));
@@ -54,6 +55,7 @@ size_t Print::print(const String &s) NOEXCEPT
 {
   return write(s.c_str(), s.length());
 }
+#endif
 
 size_t Print::print(const char str[]) NOEXCEPT
 {
@@ -135,12 +137,21 @@ size_t Print::print(double n, int digits) NOEXCEPT
   return printFloat(n, digits);
 }
 
+#ifndef DISABLE_ARDUINO_STRING
 size_t Print::println(const __FlashStringHelper *ifsh) NOEXCEPT
 {
   size_t n = print(ifsh);
   n += println();
   return n;
 }
+
+size_t Print::println(const String &s) NOEXCEPT
+{
+  size_t n = print(s);
+  n += println();
+  return n;
+}
+#endif
 
 size_t Print::print(const Printable &x) NOEXCEPT
 {
@@ -150,13 +161,6 @@ size_t Print::print(const Printable &x) NOEXCEPT
 size_t Print::println(void) NOEXCEPT
 {
   return write("\r\n");
-}
-
-size_t Print::println(const String &s) NOEXCEPT
-{
-  size_t n = print(s);
-  n += println();
-  return n;
 }
 
 size_t Print::println(const char c[]) NOEXCEPT

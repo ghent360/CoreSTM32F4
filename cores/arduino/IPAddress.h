@@ -50,11 +50,12 @@ class IPAddress : public Printable {
     IPAddress(const uint8_t *address);
 
     bool fromString(const char *address);
+#ifndef DISABLE_ARDUINO_STRING
     bool fromString(const String &address)
     {
       return fromString(address.c_str());
     }
-
+#endif
     // Overloaded cast operator to allow IPAddress objects to be used where a pointer
     // to a four-byte uint8_t array is expected
     operator uint32_t() const

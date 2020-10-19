@@ -21,6 +21,7 @@
 
 #ifndef String_class_h
 #define String_class_h
+#ifndef DISABLE_ARDUINO_STRING
 #ifdef __cplusplus
 
 #include <stdlib.h>
@@ -306,4 +307,5 @@ class StringSumHelper : public String {
 };
 
 #endif  // __cplusplus
+#endif  // DISABLE_ARDUINO_STRING
 #endif  // String_class_h

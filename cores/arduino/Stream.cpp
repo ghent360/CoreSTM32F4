@@ -246,6 +246,7 @@ size_t Stream::readBytesUntil(char terminator, char *buffer, size_t length) NOEX
   return index; // return number of characters, not including null terminator
 }
 
+#ifndef DISABLE_ARDUINO_STRING
 String Stream::readString() NOEXCEPT
 {
   String ret;
@@ -267,6 +268,7 @@ String Stream::readStringUntil(char terminator) NOEXCEPT
   }
   return ret;
 }
+#endif
 
 int Stream::findMulti(struct Stream::MultiTarget *targets, int tCount) NOEXCEPT
 {

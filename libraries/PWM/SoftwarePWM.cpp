@@ -125,8 +125,7 @@ static void adjustOnOffTime(int chan, uint32_t onTime, uint32_t offTime)
     s.newTimes = true;
 }
 
-extern "C" void RIT_IRQHandler(HardwareTimer *) __attribute__ ((hot));
-void SPWM_Handler(HardwareTimer * notused)
+void SPWM_Handler()
 { 
 #ifdef LPC_DEBUG
     pwmInts++;
