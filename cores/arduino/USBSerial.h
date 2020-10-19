@@ -27,33 +27,33 @@
 // Serial over CDC
 class USBSerial : public Stream {
   public:
-    void begin(void) noexcept;
-    void begin(uint32_t) noexcept;
-    void begin(uint32_t, uint8_t) noexcept;
-    void end(void) noexcept;
+    void begin(void) NOEXCEPT;
+    void begin(uint32_t) NOEXCEPT;
+    void begin(uint32_t, uint8_t) NOEXCEPT;
+    void end(void) NOEXCEPT;
 
-    virtual int available(void) noexcept;
-    virtual int availableForWrite(void) noexcept;
-    virtual int peek(void) noexcept;
-    virtual int read(void) noexcept;
-    virtual size_t readBytes(char *buffer, size_t length) noexcept;  // read chars from stream into buffer
-    virtual size_t readBytesUntil(char terminator, char *buffer, size_t length) noexcept;  // as readBytes with terminator character
-    virtual void flush(void) noexcept;
-    virtual size_t write(uint8_t) noexcept;
-    virtual size_t write(const uint8_t *buffer, size_t size) noexcept;
+    virtual int available(void) NOEXCEPT;
+    virtual int availableForWrite(void) NOEXCEPT;
+    virtual int peek(void) NOEXCEPT;
+    virtual int read(void) NOEXCEPT;
+    virtual size_t readBytes(char *buffer, size_t length) NOEXCEPT;  // read chars from stream into buffer
+    virtual size_t readBytesUntil(char terminator, char *buffer, size_t length) NOEXCEPT;  // as readBytes with terminator character
+    virtual void flush(void) NOEXCEPT;
+    virtual size_t write(uint8_t) NOEXCEPT;
+    virtual size_t write(const uint8_t *buffer, size_t size) NOEXCEPT;
     using Print::write; // pull in write(str) from Print
-    operator bool(void) noexcept;
-    bool IsConnected() noexcept;
+    operator bool(void) NOEXCEPT;
+    bool IsConnected() NOEXCEPT;
 
     // These return the settings specified by the USB host for the
     // serial port. These aren't really used, but are offered here
     // in case a sketch wants to act on these settings.
-    uint32_t baud() noexcept;
-    uint8_t stopbits() noexcept;
-    uint8_t paritytype() noexcept;
-    uint8_t numbits() noexcept;
-    bool dtr() noexcept;
-    bool rts() noexcept;
+    uint32_t baud() NOEXCEPT;
+    uint8_t stopbits() NOEXCEPT;
+    uint8_t paritytype() NOEXCEPT;
+    uint8_t numbits() NOEXCEPT;
+    bool dtr() NOEXCEPT;
+    bool rts() NOEXCEPT;
     enum {
       ONE_STOP_BIT = 0,
       ONE_AND_HALF_STOP_BIT = 1,

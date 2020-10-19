@@ -34,12 +34,12 @@ HardwareSPI HardwareSPI::SSP3;
 //#define SSPI_DEBUG
 extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
-static inline void flushTxFifo(SPI_HandleTypeDef *sspDevice) noexcept
+static inline void flushTxFifo(SPI_HandleTypeDef *sspDevice) NOEXCEPT
 {
 
 }
 
-static inline void flushRxFifo(SPI_HandleTypeDef *hspi) noexcept
+static inline void flushRxFifo(SPI_HandleTypeDef *hspi) NOEXCEPT
 {
     uint8_t dummy;
     int cnt = 0;
@@ -53,13 +53,13 @@ static inline void flushRxFifo(SPI_HandleTypeDef *hspi) noexcept
         //debugPrintf("Flushed cnt %d\n", cnt);
 }
 
-void HardwareSPI::flushRx() noexcept
+void HardwareSPI::flushRx() NOEXCEPT
 {
     flushRxFifo(&spi.handle);
 }
 
 // Disable the device and flush any data from the fifos
-void HardwareSPI::disable() noexcept
+void HardwareSPI::disable() NOEXCEPT
 {
     if (initComplete)
     {
@@ -72,19 +72,19 @@ void HardwareSPI::disable() noexcept
 }
 
 // Wait for transmitter empty returning true if timed out
-bool HardwareSPI::waitForTxEmpty() noexcept
+bool HardwareSPI::waitForTxEmpty() NOEXCEPT
 {
     return false;
 }
 
-extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) noexcept
+extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) NOEXCEPT
 {
     // Get pointer to containing object
     HardwareSPI *s = (HardwareSPI *)((uint8_t *)hspi - ((uint8_t *)&(HardwareSPI::SSP1.spi.handle) - (uint8_t *)&HardwareSPI::SSP1));
     if (s->callback) s->callback(s);    
 }
 
-extern "C" void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) noexcept
+extern "C" void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) NOEXCEPT
 {
     // Get pointer to containing object 
     HardwareSPI *s = (HardwareSPI *)((uint8_t *)hspi - ((uint8_t *)&(HardwareSPI::SSP1.spi.handle) - (uint8_t *)&HardwareSPI::SSP1));
@@ -112,7 +112,7 @@ extern "C" void DMA1_Stream4_IRQHandler()
 }
 
 // Called on completion of a blocking transfer
-void transferComplete(HardwareSPI *spiDevice) noexcept
+void transferComplete(HardwareSPI *spiDevice) NOEXCEPT
 {
     BaseType_t higherPriorityTaskWoken = pdFALSE;
     vTaskNotifyGiveFromISR(spiDevice->waitingTask, &higherPriorityTaskWoken);
@@ -120,7 +120,7 @@ void transferComplete(HardwareSPI *spiDevice) noexcept
 }
 
 void HardwareSPI::initPins(Pin clk, Pin miso, Pin mosi, Pin cs, DMA_Stream_TypeDef* rxStream, uint32_t rxChan, IRQn_Type rxIrq,
-                            DMA_Stream_TypeDef* txStream, uint32_t txChan, IRQn_Type txIrq) noexcept
+                            DMA_Stream_TypeDef* txStream, uint32_t txChan, IRQn_Type txIrq) NOEXCEPT
 {
     spi.pin_sclk = clk;
     spi.pin_miso = miso;
@@ -142,7 +142,7 @@ void HardwareSPI::initPins(Pin clk, Pin miso, Pin mosi, Pin cs, DMA_Stream_TypeD
     initComplete = false;
 }
 
-void HardwareSPI::initDmaStream(DMA_HandleTypeDef& hdma, DMA_Stream_TypeDef *inst, uint32_t chan, IRQn_Type irq, uint32_t dir, uint32_t minc) noexcept
+void HardwareSPI::initDmaStream(DMA_HandleTypeDef& hdma, DMA_Stream_TypeDef *inst, uint32_t chan, IRQn_Type irq, uint32_t dir, uint32_t minc) NOEXCEPT
 {
     hdma.Instance                 = inst;
     
@@ -163,7 +163,7 @@ void HardwareSPI::initDmaStream(DMA_HandleTypeDef& hdma, DMA_Stream_TypeDef *ins
     NVIC_EnableIRQ(irq);      
 }
 
-void HardwareSPI::configureDevice(uint32_t deviceMode, uint32_t bits, uint32_t clockMode, uint32_t bitRate, bool hardwareCS) noexcept
+void HardwareSPI::configureDevice(uint32_t deviceMode, uint32_t bits, uint32_t clockMode, uint32_t bitRate, bool hardwareCS) NOEXCEPT
 {
     Pin cs = (hardwareCS ? csPin : NoPin);
     if (!initComplete || bitRate != curBitRate || bits != curBits || clockMode != curClockMode )
@@ -184,13 +184,13 @@ void HardwareSPI::configureDevice(uint32_t deviceMode, uint32_t bits, uint32_t c
 }
 
 //setup the master device.
-void HardwareSPI::configureDevice(uint32_t bits, uint32_t clockMode, uint32_t bitRate) noexcept
+void HardwareSPI::configureDevice(uint32_t bits, uint32_t clockMode, uint32_t bitRate) NOEXCEPT
 {
     configureDevice(SPI_MODE_MASTER, bits, clockMode, bitRate, false);
 }
 
 
-HardwareSPI::HardwareSPI() noexcept :initComplete(false)
+HardwareSPI::HardwareSPI() NOEXCEPT :initComplete(false)
 {
     curBitRate = 0xffffffff;
     curClockMode = 0xffffffff;
@@ -198,7 +198,7 @@ HardwareSPI::HardwareSPI() noexcept :initComplete(false)
 }
 
 
-void HardwareSPI::startTransfer(const uint8_t *tx_data, uint8_t *rx_data, size_t len, SPICallbackFunction ioComplete) noexcept
+void HardwareSPI::startTransfer(const uint8_t *tx_data, uint8_t *rx_data, size_t len, SPICallbackFunction ioComplete) NOEXCEPT
 {
     // FIXME using DMA for a small number of bytes is probably a very bad idea, there is a lot of setup
     // consider turning off meminc when rx_data or tx_data is null so we don't need to memset buffers to 0xff for the sd card.
@@ -234,7 +234,7 @@ void HardwareSPI::startTransfer(const uint8_t *tx_data, uint8_t *rx_data, size_t
         debugPrintf("SPI Error %d\n", (int)status);
 }
 
-void HardwareSPI::stopTransfer() noexcept
+void HardwareSPI::stopTransfer() NOEXCEPT
 {
     // Stop a DMA transfer.
     // Note although in theory we could use HAL_SPI_Abort to do this it does not
@@ -245,7 +245,7 @@ void HardwareSPI::stopTransfer() noexcept
     configureDevice(spi.handle.Init.Mode, curBits, curClockMode, curBitRate, spi.pin_ssel != NoPin);
 }
 
-void HardwareSPI::startTransferAndWait(const uint8_t *tx_data, uint8_t *rx_data, size_t len) noexcept
+void HardwareSPI::startTransferAndWait(const uint8_t *tx_data, uint8_t *rx_data, size_t len) NOEXCEPT
 {
     HAL_StatusTypeDef status;
     if (rx_data == nullptr)
@@ -258,7 +258,7 @@ void HardwareSPI::startTransferAndWait(const uint8_t *tx_data, uint8_t *rx_data,
         debugPrintf("SPI Error %d\n", (int)status);
 }
 
-spi_status_t HardwareSPI::transceivePacket(const uint8_t *tx_data, uint8_t *rx_data, size_t len) noexcept
+spi_status_t HardwareSPI::transceivePacket(const uint8_t *tx_data, uint8_t *rx_data, size_t len) NOEXCEPT
 {
     if (usingDma)
     {

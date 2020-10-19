@@ -13,11 +13,11 @@ class HybridPWMPin;
 class HybridPWMBase
 {
     public:
-        HybridPWMBase() noexcept;
-        virtual void free() noexcept = 0;
-        virtual void setValue(float val) noexcept = 0;
-        virtual void appendStatus(const StringRef& reply) noexcept = 0;
-        static HybridPWMBase *allocate(HybridPWMPin *p, Pin pin, uint32_t freq, float value) noexcept;
+        HybridPWMBase() NOEXCEPT;
+        virtual void free() NOEXCEPT = 0;
+        virtual void setValue(float val) NOEXCEPT = 0;
+        virtual void appendStatus(const StringRef& reply) NOEXCEPT = 0;
+        static HybridPWMBase *allocate(HybridPWMPin *p, Pin pin, uint32_t freq, float value) NOEXCEPT;
 
     protected:
         HybridPWMPin *pwmPin;
@@ -26,12 +26,12 @@ class HybridPWMBase
 class HybridPWMPin
 {
     public:
-        HybridPWMPin() noexcept;
-        static HybridPWMPin *allocate(Pin pin, float value) noexcept;
-        static HybridPWMPin *find(Pin pin) noexcept;
-        void free() noexcept;
-        void set(float value, uint32_t freq) noexcept;
-        void appendStatus(const StringRef& reply) noexcept;
+        HybridPWMPin() NOEXCEPT;
+        static HybridPWMPin *allocate(Pin pin, float value) NOEXCEPT;
+        static HybridPWMPin *find(Pin pin) NOEXCEPT;
+        void free() NOEXCEPT;
+        void set(float value, uint32_t freq) NOEXCEPT;
+        void appendStatus(const StringRef& reply) NOEXCEPT;
 
         Pin pin;
         float value;
@@ -44,11 +44,11 @@ class HybridPWMPin
 class HardwarePWM : HybridPWMBase
 {
     public:
-        HardwarePWM() noexcept;
-        virtual void free() noexcept;
-        virtual void setValue(float val) noexcept;
-        virtual void appendStatus(const StringRef& reply) noexcept;
-        static HybridPWMBase *allocate(Pin pin, uint32_t freq, float value) noexcept;
+        HardwarePWM() NOEXCEPT;
+        virtual void free() NOEXCEPT;
+        virtual void setValue(float val) NOEXCEPT;
+        virtual void appendStatus(const StringRef& reply) NOEXCEPT;
+        static HybridPWMBase *allocate(Pin pin, uint32_t freq, float value) NOEXCEPT;
     private:
         HardwareTimer *timer;
         uint32_t channel;
@@ -57,13 +57,13 @@ class HardwarePWM : HybridPWMBase
 class SoftwarePWM : HybridPWMBase
 {
     public:
-        SoftwarePWM() noexcept;
-        virtual void free() noexcept;
-        virtual void setValue(float val) noexcept;
-        virtual void appendStatus(const StringRef& reply) noexcept;
-        static HybridPWMBase *allocate(Pin pin, uint32_t freq, float value) noexcept;
+        SoftwarePWM() NOEXCEPT;
+        virtual void free() NOEXCEPT;
+        virtual void setValue(float val) NOEXCEPT;
+        virtual void appendStatus(const StringRef& reply) NOEXCEPT;
+        static HybridPWMBase *allocate(Pin pin, uint32_t freq, float value) NOEXCEPT;
     private:
-        void setValue(Pin pin, float value) noexcept;
+        void setValue(Pin pin, float value) NOEXCEPT;
         int32_t channel;
         uint32_t period;
 };

@@ -23,8 +23,8 @@
 extern "C" {
 #endif
 
-void Reset() noexcept;
-void EraseAndReset() noexcept;
+void Reset();
+void EraseAndReset();
 
 #ifdef __cplusplus
 }

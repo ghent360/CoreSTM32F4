@@ -28,6 +28,11 @@
 #else
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#if !defined(USBD_VBUS_DETECTION_ENABLE)
+  #define VBUS_SENSING DISABLE
+#else
+  #define VBUS_SENSING ENABLE
+#endif
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
@@ -128,7 +133,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef *hpcd)
     __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
     /* Set USB FS Interrupt priority */
-    //HAL_NVIC_SetPriority(OTG_FS_IRQn, USBD_IRQ_PRIO, USBD_IRQ_SUBPRIO);
+    HAL_NVIC_SetPriority(OTG_FS_IRQn, USBD_IRQ_PRIO, USBD_IRQ_SUBPRIO);
 
     /* Enable USB FS Interrupt */
     HAL_NVIC_EnableIRQ(OTG_FS_IRQn);
@@ -381,11 +386,11 @@ void HAL_PCD_DisconnectCallback(PCD_HandleTypeDef *hpcd)
   * @retval None
   */
 #ifdef USE_USB_HS
-void OTG_HS_IRQHandler(void)
+  void OTG_HS_IRQHandler(void)
 #elif defined(USB_OTG_FS)
-void OTG_FS_IRQHandler(void)
+  void OTG_FS_IRQHandler(void)
 #else /* USB */
-void USB_IRQHandler(void)
+  void USB_IRQHandler(void)
 #endif
 {
   HAL_PCD_IRQHandler(&g_hpcd);
@@ -418,11 +423,11 @@ void USB_LP_IRQHandler(void)
   * @retval None
   */
 #ifdef USE_USB_HS
-void OTG_HS_WKUP_IRQHandler(void)
+  void OTG_HS_WKUP_IRQHandler(void)
 #elif defined(USB_OTG_FS)
-void OTG_FS_WKUP_IRQHandler(void)
+  void OTG_FS_WKUP_IRQHandler(void)
 #else
-void USBWakeUp_IRQHandler(void)
+  void USBWakeUp_IRQHandler(void)
 #endif
 {
   if ((&g_hpcd)->Init.low_power_enable) {
@@ -460,7 +465,15 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   USBD_reenumerate();
   /* Set common LL Driver parameters */
   g_hpcd.Init.dev_endpoints = DEV_NUM_EP;
+#ifdef DEP0CTL_MPS_64
   g_hpcd.Init.ep0_mps = DEP0CTL_MPS_64;
+#else
+#ifdef EP_MPS_64
+  g_hpcd.Init.ep0_mps = EP_MPS_64;
+#else
+#error "Missing EP0 MPS definition: DEP0CTL_MPS_64 or EP_MPS_64!"
+#endif
+#endif
 #if !defined(STM32F1xx) && !defined(STM32F2xx) || defined(USB)
   g_hpcd.Init.lpm_enable = DISABLE;
   g_hpcd.Init.battery_charging_enable = DISABLE;
@@ -479,14 +492,14 @@ USBD_StatusTypeDef USBD_LL_Init(USBD_HandleTypeDef *pdev)
   g_hpcd.Init.phy_itface = PCD_PHY_ULPI;
 #endif
   g_hpcd.Init.speed = PCD_SPEED_HIGH;
-  g_hpcd.Init.vbus_sensing_enable = ENABLE;
+  g_hpcd.Init.vbus_sensing_enable = VBUS_SENSING;
   g_hpcd.Init.use_external_vbus = DISABLE;
 #else /* USE_USB_FS */
 #ifdef USB_OTG_FS
   g_hpcd.Instance = USB_OTG_FS;
   g_hpcd.Init.use_dedicated_ep1 = DISABLE;
   g_hpcd.Init.dma_enable = DISABLE;
-  g_hpcd.Init.vbus_sensing_enable = DISABLE;
+  g_hpcd.Init.vbus_sensing_enable = VBUS_SENSING;
   g_hpcd.Init.use_external_vbus = DISABLE;
 #else
   g_hpcd.Instance = USB;
@@ -660,7 +673,7 @@ USBD_StatusTypeDef USBD_LL_SetUSBAddress(USBD_HandleTypeDef *pdev, uint8_t dev_a
 USBD_StatusTypeDef USBD_LL_Transmit(USBD_HandleTypeDef *pdev,
                                     uint8_t ep_addr,
                                     uint8_t *pbuf,
-                                    uint16_t size)
+                                    uint32_t size)
 {
   HAL_PCD_EP_Transmit(pdev->pData, ep_addr, pbuf, size);
   return USBD_OK;
@@ -677,7 +690,7 @@ USBD_StatusTypeDef USBD_LL_Transmit(USBD_HandleTypeDef *pdev,
 USBD_StatusTypeDef USBD_LL_PrepareReceive(USBD_HandleTypeDef *pdev,
                                           uint8_t ep_addr,
                                           uint8_t *pbuf,
-                                          uint16_t size)
+                                          uint32_t size)
 {
   HAL_PCD_EP_Receive(pdev->pData, ep_addr, pbuf, size);
   return USBD_OK;

@@ -41,21 +41,30 @@
 // often work, but occasionally a race condition can occur that makes
 // Serial behave erratically. See https://github.com/arduino/Arduino/issues/2405
 #if !defined(SERIAL_TX_BUFFER_SIZE)
-#define SERIAL_TX_BUFFER_SIZE 64
+  #define SERIAL_TX_BUFFER_SIZE 64
 #endif
 #if !defined(SERIAL_RX_BUFFER_SIZE)
-#define SERIAL_RX_BUFFER_SIZE 64
+  #define SERIAL_RX_BUFFER_SIZE 64
 #endif
 #if (SERIAL_TX_BUFFER_SIZE>256)
-typedef uint16_t tx_buffer_index_t;
+  typedef uint16_t tx_buffer_index_t;
 #else
-typedef uint8_t tx_buffer_index_t;
+  typedef uint8_t tx_buffer_index_t;
 #endif
 #if  (SERIAL_RX_BUFFER_SIZE>256)
-typedef uint16_t rx_buffer_index_t;
+  typedef uint16_t rx_buffer_index_t;
 #else
-typedef uint8_t rx_buffer_index_t;
+  typedef uint8_t rx_buffer_index_t;
 #endif
+
+// A bool should be enough for this
+// But it brings an build error due to ambiguous
+// call of overloaded HardwareSerial(int, int)
+// So defining a dedicated type
+typedef enum {
+  HALF_DUPLEX_DISABLED,
+  HALF_DUPLEX_ENABLED
+} HalfDuplexMode_t;
 
 // Define config for Serial.begin(baud, config);
 // below configs are not supported by STM32
@@ -69,12 +78,12 @@ typedef uint8_t rx_buffer_index_t;
 //#define SERIAL_6N2 0x0A
 
 #ifdef UART_WORDLENGTH_7B
-#define SERIAL_7N1 0x04
-#define SERIAL_7N2 0x0C
-#define SERIAL_6E1 0x22
-#define SERIAL_6E2 0x2A
-#define SERIAL_6O1 0x32
-#define SERIAL_6O2 0x3A
+  #define SERIAL_7N1 0x04
+  #define SERIAL_7N2 0x0C
+  #define SERIAL_6E1 0x22
+  #define SERIAL_6E2 0x2A
+  #define SERIAL_6O1 0x32
+  #define SERIAL_6O2 0x3A
 #endif
 #define SERIAL_8N1 0x06
 #define SERIAL_8N2 0x0E
@@ -101,59 +110,69 @@ class HardwareSerial : public Stream {
     serial_t _serial;
 
   public:
-    HardwareSerial(uint32_t _rx, uint32_t _tx) noexcept;
-    HardwareSerial(PinName _rx, PinName _tx) noexcept;
-    HardwareSerial(void *peripheral) noexcept;
-    void begin(unsigned long baud) noexcept
+    HardwareSerial(uint32_t _rx, uint32_t _tx) NOEXCEPT;
+    HardwareSerial(PinName _rx, PinName _tx) NOEXCEPT;
+    HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex = HALF_DUPLEX_DISABLED) NOEXCEPT;
+    HardwareSerial(uint32_t _rxtx) NOEXCEPT;
+    HardwareSerial(PinName _rxtx) NOEXCEPT;
+    void begin(unsigned long baud) NOEXCEPT
     {
       begin(baud, SERIAL_8N1);
     }
-    void begin(unsigned long, uint8_t) noexcept;
+    void begin(unsigned long, uint8_t) NOEXCEPT;
     void end();
-    virtual int available(void) noexcept;
-    virtual int peek(void) noexcept;
-    virtual int read(void) noexcept;
-    int availableForWrite(void) noexcept;
-    virtual void flush(void) noexcept;
-    virtual size_t write(uint8_t) noexcept;
-    inline size_t write(unsigned long n) noexcept
+    virtual int available(void) NOEXCEPT;
+    virtual int peek(void) NOEXCEPT;
+    virtual int read(void) NOEXCEPT;
+    int availableForWrite(void) NOEXCEPT;
+    virtual void flush(void) NOEXCEPT;
+    virtual size_t write(uint8_t) NOEXCEPT;
+    inline size_t write(unsigned long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(long n) noexcept
+    inline size_t write(long n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(unsigned int n) noexcept
+    inline size_t write(unsigned int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
-    inline size_t write(int n) noexcept
+    inline size_t write(int n) NOEXCEPT
     {
       return write((uint8_t)n);
     }
     using Print::write; // pull in write(str) and write(buf, size) from Print
-    operator bool() noexcept
+    operator bool() NOEXCEPT
     {
       return true;
     }
 
-    void setRx(uint32_t _rx) noexcept;
-    void setTx(uint32_t _tx) noexcept;
-    void setRx(PinName _rx) noexcept;
-    void setTx(PinName _tx) noexcept;
-    void setInterruptPriority(uint32_t priority) noexcept;
-    uint32_t getInterruptPriority() noexcept;
+    void setRx(uint32_t _rx) NOEXCEPT;
+    void setTx(uint32_t _tx) NOEXCEPT;
+    void setRx(PinName _rx) NOEXCEPT;
+    void setTx(PinName _tx) NOEXCEPT;
+    void setInterruptPriority(uint32_t priority) NOEXCEPT;
+    uint32_t getInterruptPriority() NOEXCEPT;
+
+    // Enable half-duplex mode by setting the Rx pin to NC
+    // This needs to be done before the call to begin()
+    void setHalfDuplex(void) NOEXCEPT;
+    bool isHalfDuplex(void) const NOEXCEPT;
+    void enableHalfDuplexRx(void) NOEXCEPT;
+
     friend class STM32LowPower;
 
     // Interrupt handlers
-    static void _rx_complete_irq(serial_t *obj) noexcept;
-    static int _tx_complete_irq(serial_t *obj) noexcept;
+    static void _rx_complete_irq(serial_t *obj) NOEXCEPT;
+    static int _tx_complete_irq(serial_t *obj) NOEXCEPT;
   private:
+    bool _rx_enabled;
     uint8_t _config;
     unsigned long _baud;
-    void init(void) noexcept;
-    void configForLowPower(void) noexcept;
+    void init(PinName _rx, PinName _tx) NOEXCEPT;
+    void configForLowPower(void) NOEXCEPT;
 };
 
 extern HardwareSerial Serial1;

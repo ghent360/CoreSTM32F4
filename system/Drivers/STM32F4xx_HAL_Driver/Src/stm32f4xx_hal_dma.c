@@ -478,7 +478,6 @@ HAL_StatusTypeDef HAL_DMA_Start_IT(DMA_HandleTypeDef *hdma, uint32_t SrcAddress,
 
     /* Enable Common interrupts*/
     hdma->Instance->CR  |= DMA_IT_TC | DMA_IT_TE | DMA_IT_DME;
-    hdma->Instance->FCR |= DMA_IT_FE;
 
     if(hdma->XferHalfCpltCallback != NULL)
     {
@@ -1151,8 +1150,7 @@ uint32_t HAL_DMA_GetError(DMA_HandleTypeDef *hdma)
 static void DMA_SetConfig(DMA_HandleTypeDef *hdma, uint32_t SrcAddress, uint32_t DstAddress, uint32_t DataLength)
 {
   /* Clear DBM bit */
-  hdma->Instance->CR &= (uint32_t)(~(DMA_SxCR_DBM|DMA_SxCR_DIR));
-  hdma->Instance->CR |= hdma->Init.Direction;
+  hdma->Instance->CR &= (uint32_t)(~DMA_SxCR_DBM);
 
   /* Configure DMA Stream data length */
   hdma->Instance->NDTR = DataLength;

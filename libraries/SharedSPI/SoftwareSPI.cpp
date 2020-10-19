@@ -10,14 +10,14 @@ extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf
 
 SoftwareSPI SoftwareSPI::SWSSP0;
 
-bool SoftwareSPI::waitForTxEmpty() noexcept
+bool SoftwareSPI::waitForTxEmpty() NOEXCEPT
 {
     return false;
 }
 
 
 void SoftwareSPI::initPins(Pin clk, Pin miso, Pin mosi, Pin cs, DMA_Stream_TypeDef* rxStream, uint32_t rxChan, IRQn_Type rxIrq,
-                            DMA_Stream_TypeDef* txStream, uint32_t txChan, IRQn_Type txIrq) noexcept
+                            DMA_Stream_TypeDef* txStream, uint32_t txChan, IRQn_Type txIrq) NOEXCEPT
 {
     this->sck = clk;
     this->miso = miso;
@@ -25,7 +25,7 @@ void SoftwareSPI::initPins(Pin clk, Pin miso, Pin mosi, Pin cs, DMA_Stream_TypeD
 }
 
 //setup the master device.
-void SoftwareSPI::configureDevice(uint32_t bits, uint32_t clockMode, uint32_t bitRate) noexcept
+void SoftwareSPI::configureDevice(uint32_t bits, uint32_t clockMode, uint32_t bitRate) NOEXCEPT
 {
     if(needInit)
     {
@@ -41,14 +41,14 @@ void SoftwareSPI::configureDevice(uint32_t bits, uint32_t clockMode, uint32_t bi
 }
 
 
-SoftwareSPI::SoftwareSPI() noexcept
+SoftwareSPI::SoftwareSPI() NOEXCEPT
     :needInit(true),sck(NoPin),mosi(NoPin),miso(NoPin)
 {
 
 }
 
 
-spi_status_t SoftwareSPI::transceivePacket(const uint8_t *tx_data, uint8_t *rx_data, size_t len) noexcept
+spi_status_t SoftwareSPI::transceivePacket(const uint8_t *tx_data, uint8_t *rx_data, size_t len) NOEXCEPT
 {
     for (uint32_t i = 0; i < len; ++i)
     {
@@ -71,7 +71,7 @@ spi_status_t SoftwareSPI::transceivePacket(const uint8_t *tx_data, uint8_t *rx_d
  //WikiPedia: https://en.wikipedia.org/wiki/Serial_Peripheral_Interface#Example_of_bit-banging_the_master_protocol
  
  */
-uint8_t SoftwareSPI::transfer_byte(uint8_t byte_out) noexcept
+uint8_t SoftwareSPI::transfer_byte(uint8_t byte_out) NOEXCEPT
 {
     uint8_t byte_in = 0;
     uint8_t bit;

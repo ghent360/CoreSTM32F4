@@ -22,7 +22,7 @@
 #include "PinAF_STM32F1.h"
 #include "interrupt.h"
 
-bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept
+bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) NOEXCEPT
 {
 #if !defined(HAL_EXTI_MODULE_DISABLED)
   uint32_t it_mode;
@@ -59,11 +59,34 @@ bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum Inter
   UNUSED(callback);
   UNUSED(mode);
 #endif
-return true;
+  return true;
 }
 
+static void callbackWrapper(CallbackParameter param) NOEXCEPT {
+  param.fp();
+}
 
-void detachInterrupt(uint32_t pin) noexcept
+void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) NOEXCEPT
+{
+  attachInterrupt(pin, callbackWrapper, mode, callback);
+}
+
+extern "C" {
+
+void attachInterrupt(uint32_t pin, void (*callback)(void), enum InterruptMode mode)
+{
+#if !defined(HAL_EXTI_MODULE_DISABLED)
+  callback_function_t _c = callback;
+  attachInterrupt(pin, _c, mode);
+#else
+  UNUSED(pin);
+  UNUSED(callback);
+  UNUSED(mode);
+#endif
+
+}
+
+void detachInterrupt(uint32_t pin)
 {
 #if !defined(HAL_EXTI_MODULE_DISABLED)
   PinName p = digitalPinToPinName(pin);
@@ -76,3 +99,5 @@ void detachInterrupt(uint32_t pin) noexcept
   UNUSED(pin);
 #endif
 }
+
+} // extern "C"

@@ -20,6 +20,9 @@
 #define _WATCHDOG_
 
 #include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Watchdog functions
 
@@ -28,19 +31,23 @@
  *
  * \param timeout in milliseconds.
  */
-void watchdogEnable (uint32_t timeout) noexcept;
+void watchdogEnable (uint32_t timeout);
 
 /*
  * \brief Disable the watchdog timer. Should only be called once.
  *
  */
-void watchdogDisable (void) noexcept;
+void watchdogDisable (void);
 
 /*
  * \brief Reset the watchdog counter.
  *
  */
-void watchdogReset (void) noexcept;
+void watchdogReset (void);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #endif /* _WATCHDOG_ */
 

@@ -16,31 +16,31 @@ class ConfigurableUART : public Stream
 {
 
 public:
-    ConfigurableUART() noexcept;
+    ConfigurableUART() NOEXCEPT;
 
-    bool Configure(Pin rx, Pin tx) noexcept;
+    bool Configure(Pin rx, Pin tx) NOEXCEPT;
     
-    void begin(uint32_t baud) noexcept;
-    void end() noexcept;
+    void begin(uint32_t baud) NOEXCEPT;
+    void end() NOEXCEPT;
 
-    size_t write(const uint8_t *buffer, size_t size) noexcept override;
-    size_t write(uint8_t) noexcept override;
+    size_t write(const uint8_t *buffer, size_t size) NOEXCEPT override;
+    size_t write(uint8_t) NOEXCEPT override;
 
-    int available(void) noexcept;
-    int availableForWrite(void) noexcept;
+    int available(void) NOEXCEPT;
+    int availableForWrite(void) NOEXCEPT;
     
-    int peek(void) noexcept;
-    int read(void) noexcept;
-    void flush(void) noexcept;
+    int peek(void) NOEXCEPT;
+    int read(void) NOEXCEPT;
+    void flush(void) NOEXCEPT;
     using Print::write;
-    size_t canWrite() noexcept;
+    size_t canWrite() NOEXCEPT;
 
-    bool IsConnected() noexcept;
+    bool IsConnected() NOEXCEPT;
 
-    int8_t GetUARTPortNumber() noexcept;
+    int8_t GetUARTPortNumber() NOEXCEPT;
 
-    void setInterruptPriority(uint32_t priority) noexcept;
-    uint32_t getInterruptPriority() noexcept;
+    void setInterruptPriority(uint32_t priority) NOEXCEPT;
+    uint32_t getInterruptPriority() NOEXCEPT;
 
 private:
     HardwareSerial *serialPort;

@@ -27,9 +27,11 @@ extern "C" {
 
 
 extern uint32_t g_anOutputPinConfigured[MAX_NB_PORT];
-void pinModeDuet(Pin pin, enum PinMode ulMode, uint32_t debounceCutoff) noexcept
-{
-    if(pin == NoPin) return;
+
+void pinModeDuet(uint32_t ulPin, enum PinMode ulMode, uint32_t debounceCutoff) {
+    PinName pin = digitalPinToPinName(ulPin);
+
+    if (pin == NC)return;
     switch (ulMode)
     {
         case INPUT:
@@ -82,31 +84,27 @@ void pinModeDuet(Pin pin, enum PinMode ulMode, uint32_t debounceCutoff) noexcept
     }
 }
 
-void digitalWrite(Pin ulPin, uint32_t ulVal)
-{
+void digitalWrite(uint32_t ulPin, uint32_t ulVal) {
   if (ulPin == NC) return;
   digitalWriteFast(digitalPinToPinName(ulPin), ulVal);
 }
 
-int digitalRead(Pin ulPin)
-{
+int digitalRead(uint32_t ulPin) {
   if (ulPin == NC) return 0;
   return digitalReadFast(digitalPinToPinName(ulPin));
 }
 
-void digitalToggle(Pin ulPin)
-{
+void digitalToggle(uint32_t ulPin) {
   if (ulPin == NC) return;
   digitalToggleFast(digitalPinToPinName(ulPin));
 }
 
-void setPullup(Pin pin, bool en)
-{
+void setPullup(uint32_t pin, bool en) {
   if (pin == NC) return;
   if (en)
-    pin_function(pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_PULLUP, 0));
+    pin_function(digitalPinToPinName(pin), STM_PIN_DATA(STM_MODE_INPUT, GPIO_PULLUP, 0));
   else
-    pin_function(pin, STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0));
+    pin_function(digitalPinToPinName(pin), STM_PIN_DATA(STM_MODE_INPUT, GPIO_NOPULL, 0));
 }
 #ifdef __cplusplus
 }

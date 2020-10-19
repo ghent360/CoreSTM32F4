@@ -69,10 +69,10 @@
   * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
+  * This software component is licensed by ST under Apache License, Version 2.0,
   * the "License"; You may not use this file except in compliance with the
   * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  *                        opensource.org/licenses/Apache-2.0
   *
   ******************************************************************************
   */
@@ -90,18 +90,6 @@
   */
 
 #include "stm32l4xx.h"
-
-#if !defined  (HSE_VALUE)
-  #define HSE_VALUE    8000000U  /*!< Value of the External oscillator in Hz */
-#endif /* HSE_VALUE */
-
-#if !defined  (MSI_VALUE)
-  #define MSI_VALUE    4000000U  /*!< Value of the Internal oscillator in Hz*/
-#endif /* MSI_VALUE */
-
-#if !defined  (HSI_VALUE)
-  #define HSI_VALUE    16000000U /*!< Value of the Internal oscillator in Hz*/
-#endif /* HSI_VALUE */
 
 /**
   * @}

@@ -23,16 +23,14 @@
 extern "C" {
 #endif
 
-void Reset()
-{
-	NVIC_SystemReset();
+void Reset() {
+  NVIC_SystemReset();
 }
 
 // Switch into boot mode and reset
-void EraseAndReset()
-{
+void EraseAndReset() {
   Reset();
-	for(;;) {}
+  for(;;) {}
 }
 
 #ifdef __cplusplus

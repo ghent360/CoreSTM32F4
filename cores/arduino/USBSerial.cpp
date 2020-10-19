@@ -30,41 +30,41 @@ extern __IO  uint32_t lineState;
 USBSerial SerialUSB;
 void serialEventUSB() __attribute__((weak));
 
-void USBSerial::begin(void) noexcept
+void USBSerial::begin(void) NOEXCEPT
 {
   CDC_init();
 }
 
-void USBSerial::begin(uint32_t /* baud_count */) noexcept
+void USBSerial::begin(uint32_t /* baud_count */) NOEXCEPT
 {
   // uart config is ignored in USB-CDC
   begin();
 }
 
-void USBSerial::begin(uint32_t /* baud_count */, uint8_t /* config */) noexcept
+void USBSerial::begin(uint32_t /* baud_count */, uint8_t /* config */) NOEXCEPT
 {
   // uart config is ignored in USB-CDC
   begin();
 }
 
-void USBSerial::end() noexcept
+void USBSerial::end() NOEXCEPT
 {
   CDC_deInit();
 }
 
-int USBSerial::availableForWrite() noexcept
+int USBSerial::availableForWrite() NOEXCEPT
 {
   // Just transmit queue size, available for write
   return static_cast<int>(CDC_TransmitQueue_WriteSize(&TransmitQueue));
 }
 
-size_t USBSerial::write(uint8_t ch) noexcept
+size_t USBSerial::write(uint8_t ch) NOEXCEPT
 {
   // Just write single-byte buffer.
   return write(&ch, 1);
 }
 
-size_t USBSerial::write(const uint8_t *buffer, size_t size) noexcept
+size_t USBSerial::write(const uint8_t *buffer, size_t size) NOEXCEPT
 {
   size_t rest = size;
   while (rest > 0 && CDC_connected()) {
@@ -89,13 +89,13 @@ size_t USBSerial::write(const uint8_t *buffer, size_t size) noexcept
   return size - rest;
 }
 
-int USBSerial::available(void) noexcept
+int USBSerial::available(void) NOEXCEPT
 {
   // Just ReceiveQueue size, available for reading
   return static_cast<int>(CDC_ReceiveQueue_ReadSize(&ReceiveQueue));
 }
 
-int USBSerial::read(void) noexcept
+int USBSerial::read(void) NOEXCEPT
 {
   // Dequeue only one char from queue
   // TS: it safe, because only main thread affects ReceiveQueue->read pos
@@ -105,7 +105,7 @@ int USBSerial::read(void) noexcept
   return ch;
 }
 
-size_t USBSerial::readBytes(char *buffer, size_t length) noexcept
+size_t USBSerial::readBytes(char *buffer, size_t length) NOEXCEPT
 {
   uint16_t read;
   auto rest = static_cast<uint16_t>(length);
@@ -122,7 +122,7 @@ size_t USBSerial::readBytes(char *buffer, size_t length) noexcept
   return length - rest;
 }
 
-size_t USBSerial::readBytesUntil(char terminator, char *buffer, size_t length) noexcept
+size_t USBSerial::readBytesUntil(char terminator, char *buffer, size_t length) NOEXCEPT
 {
   uint16_t read;
   auto rest = static_cast<uint16_t>(length);
@@ -143,50 +143,50 @@ size_t USBSerial::readBytesUntil(char terminator, char *buffer, size_t length) n
   return length - rest;
 }
 
-int USBSerial::peek(void) noexcept
+int USBSerial::peek(void) NOEXCEPT
 {
   // Peek one symbol, it can't change receive avaiablity
   return CDC_ReceiveQueue_Peek(&ReceiveQueue);
 }
 
-void USBSerial::flush(void) noexcept
+void USBSerial::flush(void) NOEXCEPT
 {
   // Wait for TransmitQueue read size becomes zero
   // TS: safe, because it not be stopped while receive 0
   while (CDC_TransmitQueue_ReadSize(&TransmitQueue) > 0) {}
 }
 
-uint32_t USBSerial::baud() noexcept
+uint32_t USBSerial::baud() NOEXCEPT
 {
   return 115200;
 }
 
-uint8_t USBSerial::stopbits() noexcept
+uint8_t USBSerial::stopbits() NOEXCEPT
 {
   return ONE_STOP_BIT;
 }
 
-uint8_t USBSerial::paritytype() noexcept
+uint8_t USBSerial::paritytype() NOEXCEPT
 {
   return NO_PARITY;
 }
 
-uint8_t USBSerial::numbits() noexcept
+uint8_t USBSerial::numbits() NOEXCEPT
 {
   return 8;
 }
 
-bool USBSerial::dtr(void) noexcept
+bool USBSerial::dtr(void) NOEXCEPT
 {
   return false;
 }
 
-bool USBSerial::rts(void) noexcept
+bool USBSerial::rts(void) NOEXCEPT
 {
   return false;
 }
 
-USBSerial::operator bool() noexcept
+USBSerial::operator bool() NOEXCEPT
 {
   bool result = false;
   if (lineState == 1) {
@@ -196,7 +196,7 @@ USBSerial::operator bool() noexcept
   return result;
 }
 
-bool USBSerial::IsConnected() noexcept
+bool USBSerial::IsConnected() NOEXCEPT
 {
   return lineState == 1;
 }

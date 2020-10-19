@@ -16,6 +16,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #ifndef Arduino_h
 #define Arduino_h
 
@@ -25,16 +26,24 @@
                      + __GNUC_PATCHLEVEL__)
 #endif
 #if GCC_VERSION < 60300
-#error "GCC version 6.3 or higher is required"
+  #error "GCC version 6.3 or higher is required"
 #endif
 
-//#include "wiring.h"
+#ifdef __IN_ECLIPSE__
+  #include "SrcWrapper.h"
+#endif
+
+#include "wiring.h"
 
 /* sketch */
 
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
+// Weak empty variant initialization function.
+// May be redefined by variant files.
+extern void initVariant() __attribute__((weak));
+
 extern void setup(void) ;
 extern void loop(void) ;
 

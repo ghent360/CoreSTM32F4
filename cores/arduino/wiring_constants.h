@@ -21,62 +21,31 @@
 #include <stdint.h>
 
 #ifdef __cplusplus
-extern "C"{
-#endif // __cplusplus
-
-enum BitOrder {
-	LSBFIRST = 0,
-	MSBFIRST = 1
-};
-
-enum InterruptMode {
-	INTERRUPT_MODE_NONE = 0,
-	INTERRUPT_MODE_LOW,
-	INTERRUPT_MODE_HIGH,
-	INTERRUPT_MODE_CHANGE,
-	INTERRUPT_MODE_FALLING,
-	INTERRUPT_MODE_RISING
-};
-
-#define interrupts() __enable_irq()
-#define noInterrupts() __disable_irq()
-
-typedef bool boolean;
-
-#define LOW     0x0
-#define HIGH    0x1
-
-#ifdef __cplusplus
-} // extern "C"
-#endif // __cplusplus
-
-#endif /* _WIRING_CONSTANTS_ */
-#if 0
-#ifndef _WIRING_CONSTANTS_
-#define _WIRING_CONSTANTS_
-
-#include <stdbool.h>
-#include <stdint.h>
-
-#ifdef __cplusplus
-#include <algorithm>
-using std::min;
-using std::max;
+  #include <algorithm>
+  using std::min;
+  using std::max;
 #else // C
-#include <stdlib.h>
-#ifndef abs
-#define abs(x) ((x)>0?(x):-(x))
-#endif // abs
+  #include <stdlib.h>
+  #ifndef abs
+    #define abs(x) ((x)>0?(x):-(x))
+  #endif // abs
 
-#ifndef min
-#define min(a,b) ((a)<(b)?(a):(b))
-#endif // min
+  #ifndef min
+    #define min(a,b) ((a)<(b)?(a):(b))
+  #endif // min
 
-#ifndef max
-#define max(a,b) ((a)>(b)?(a):(b))
-#endif // max
+  #ifndef max
+    #define max(a,b) ((a)>(b)?(a):(b))
+  #endif // max
+
+  #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 #endif // __cplusplus
+
+/* STM32 extension */
+#define INPUT_FLOATING      INPUT
+//#define INPUT_ANALOG        0x4
+#define OUTPUT_OPEN_DRAIN   OUTPUT_HIGH_OPEN_DRAIN
 
 #define PI 3.1415926535897932384626433832795
 #define HALF_PI 1.5707963267948966192313216916398
@@ -93,6 +62,20 @@ enum BitOrder {
   MSBFIRST = 1
 };
 
+enum InterruptMode {
+  INTERRUPT_MODE_NONE = 0,
+  INTERRUPT_MODE_LOW,
+  INTERRUPT_MODE_HIGH,
+  INTERRUPT_MODE_CHANGE,
+  INTERRUPT_MODE_FALLING,
+  INTERRUPT_MODE_RISING
+};
+
+#define interrupts() __enable_irq()
+#define noInterrupts() __disable_irq()
+
+typedef bool boolean;
+
 #define LOW     0x0
 #define HIGH    0x1
 #define CHANGE  0x2
@@ -101,8 +84,6 @@ enum BitOrder {
 
 #define DEFAULT 1
 #define EXTERNAL 0
-
-//#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
 
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
@@ -120,22 +101,22 @@ enum BitOrder {
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
 #define bit(b) (1UL << (b))
+
 //macro added for compatibility
 #ifndef _BV
-#define _BV(bit) (1 << (bit))
+  #define _BV(bit) (1 << (bit))
 #endif
 #ifndef cbi
-#define cbi(reg, bitmask) *reg &= ~bitmask
+  #define cbi(reg, bitmask) *reg &= ~bitmask
 #endif
 #ifndef sbi
-#define sbi(reg, bitmask) *reg |= bitmask
+  #define sbi(reg, bitmask) *reg |= bitmask
 #endif
 
 typedef unsigned int word;
 
-typedef bool boolean;
+typedef bool boolean __attribute__((deprecated));
 
 typedef uint8_t byte ;
 
 #endif /* _WIRING_CONSTANTS_ */
-#endif

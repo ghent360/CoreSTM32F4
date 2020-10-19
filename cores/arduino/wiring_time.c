@@ -38,6 +38,11 @@ uint32_t micros(void)
   return getCurrentMicros();
 }
 
+void delay(uint32_t ms) __attribute__((weak));
+void delay(uint32_t ms) {
+  coreDelay(ms);
+}
+
 void coreDelay(uint32_t ms)
 {
   if (ms != 0) {

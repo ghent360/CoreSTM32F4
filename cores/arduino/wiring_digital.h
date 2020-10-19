@@ -37,7 +37,8 @@ enum PinMode
 	OUTPUT_PWM_HIGH,				// PWM output mode, initially high
 	OUTPUT_LOW_OPEN_DRAIN,			// used in SX1509B expansion driver to put the pin in open drain output mode
 	OUTPUT_HIGH_OPEN_DRAIN,			// used in SX1509B expansion driver to put the pin in open drain output mode
-	OUTPUT_PWM_OPEN_DRAIN			// used in SX1509B expansion driver to put the pin in PWM output mode
+	OUTPUT_PWM_OPEN_DRAIN, 			// used in SX1509B expansion driver to put the pin in PWM output mode
+	OUTPUT = OUTPUT_LOW,
 };
 
 /**
@@ -47,10 +48,9 @@ enum PinMode
  * \param ulMode Either INPUT or OUTPUT
  * \param debounceCutoff Debounce cutoff frequency (only one can be set per PIO)
  */
-extern void pinModeDuet(Pin pin, enum PinMode dwMode, uint32_t debounceCutoff) noexcept;
+void pinModeDuet(uint32_t pin, enum PinMode dwMode, uint32_t debounceCutoff);
 
-static inline void pinMode(Pin pin, enum PinMode dwMode) noexcept
-{
+static inline void pinMode(uint32_t pin, enum PinMode dwMode) {
 	pinModeDuet(pin, dwMode, 0);
 }
 
@@ -63,7 +63,7 @@ static inline void pinMode(Pin pin, enum PinMode dwMode) noexcept
  * \param dwPin the pin number
  * \param dwVal HIGH or LOW
  */
-extern void digitalWrite(Pin dwPin, uint32_t dwVal) ;
+void digitalWrite(uint32_t dwPin, uint32_t dwVal);
 
 /**
  * \brief Reads the value from a specified digital pin, either HIGH or LOW.
@@ -72,16 +72,16 @@ extern void digitalWrite(Pin dwPin, uint32_t dwVal) ;
  *
  * \return HIGH or LOW
  */
-extern int digitalRead(Pin ulPin) ;
+int digitalRead(uint32_t ulPin);
 
 /**
  * \brief Toggle the value from a specified digital pin.
  *
  * \param ulPin The number of the digital pin you want to toggle (int)
  */
-extern void digitalToggle(Pin ulPin) ;
+void digitalToggle(uint32_t ulPin);
 
-extern void setPullup(Pin pin, bool en) ;
+void setPullup(uint32_t pin, bool en);
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,5 @@
 /*
-  Print.h - Base class that provides print() and println()
-  Copyright (c) 2008 David A. Mellis.  All right reserved.
+  Copyright (c) 2016 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -9,8 +8,8 @@
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
@@ -22,62 +21,93 @@
 
 #include <inttypes.h>
 #include <stdio.h> // for size_t
-#include <string.h>
+#include <stdarg.h> // for printf
+
+#include "WString.h"
+#include "Printable.h"
 
 #define DEC 10
 #define HEX 16
 #define OCT 8
 #define BIN 2
 
-class Print
-{
-private:
-	int write_error;
-	size_t printNumber(unsigned long, uint8_t) noexcept;
-	size_t printFloat(double, uint8_t) noexcept;
-
-protected:
-	void setWriteError(int err = 1) noexcept { write_error = err; }
-
-public:
-    Print() noexcept : write_error(0) {}
-    virtual ~Print() {}
-
-    int getWriteError() noexcept { return write_error; }
-    void clearWriteError() noexcept { setWriteError(0); }
-
-    virtual size_t write(uint8_t) noexcept = 0;
-
-    size_t write(const char *str) noexcept
+class Print {
+  private:
+    int write_error;
+    size_t printNumber(unsigned long, uint8_t) NOEXCEPT;
+    size_t printULLNumber(unsigned long long, uint8_t) NOEXCEPT;
+    size_t printFloat(double, uint8_t) NOEXCEPT;
+  protected:
+    void setWriteError(int err = 1) NOEXCEPT
     {
-    	return (str == NULL) ? 0 : write((const uint8_t *)str, strlen(str));
+      write_error = err;
+    }
+  public:
+    Print() : write_error(0) {}
+
+    int getWriteError() NOEXCEPT
+    {
+      return write_error;
+    }
+    void clearWriteError() NOEXCEPT
+    {
+      setWriteError(0);
     }
 
-    virtual size_t write(const uint8_t *buffer, size_t size) noexcept;
-
-    size_t write(const char *buffer, size_t size) noexcept
+    virtual size_t write(uint8_t) NOEXCEPT = 0;
+    size_t write(const char *str) NOEXCEPT
     {
-    	return write((const uint8_t *)buffer, size);
+      if (str == NULL) {
+        return 0;
+      }
+      return write((const uint8_t *)str, strlen(str));
+    }
+    virtual size_t write(const uint8_t *buffer, size_t size) NOEXCEPT;
+    size_t write(const char *buffer, size_t size) NOEXCEPT
+    {
+      return write((const uint8_t *)buffer, size);
     }
 
-    size_t print(const char[]) noexcept;
-    size_t print(char) noexcept;
-    size_t print(unsigned char, int = DEC) noexcept;
-    size_t print(int, int = DEC) noexcept;
-    size_t print(unsigned int, int = DEC) noexcept;
-    size_t print(long, int = DEC) noexcept;
-    size_t print(unsigned long, int = DEC) noexcept;
-    size_t print(double, int = 2) noexcept;
+    // default to zero, meaning "a single write may block"
+    // should be overriden by subclasses with buffering
+    virtual int availableForWrite() NOEXCEPT
+    {
+      return 0;
+    }
 
-    size_t println(const char[]) noexcept;
-    size_t println(char) noexcept;
-    size_t println(unsigned char, int = DEC) noexcept;
-    size_t println(int, int = DEC) noexcept;
-    size_t println(unsigned int, int = DEC) noexcept;
-    size_t println(long, int = DEC) noexcept;
-    size_t println(unsigned long, int = DEC) noexcept;
-    size_t println(double, int = 2) noexcept;
-    size_t println(void) noexcept;
+    size_t print(const __FlashStringHelper *) NOEXCEPT;
+    size_t print(const String &) NOEXCEPT;
+    size_t print(const char[]) NOEXCEPT;
+    size_t print(char) NOEXCEPT;
+    size_t print(unsigned char, int = DEC) NOEXCEPT;
+    size_t print(int, int = DEC) NOEXCEPT;
+    size_t print(unsigned int, int = DEC) NOEXCEPT;
+    size_t print(long, int = DEC) NOEXCEPT;
+    size_t print(unsigned long, int = DEC) NOEXCEPT;
+    size_t print(long long, int = DEC) NOEXCEPT;
+    size_t print(unsigned long long, int = DEC) NOEXCEPT;
+    size_t print(double, int = 2) NOEXCEPT;
+    size_t print(const Printable &) NOEXCEPT;
+
+    size_t println(const __FlashStringHelper *) NOEXCEPT;
+    size_t println(const String &s) NOEXCEPT;
+    size_t println(const char[]) NOEXCEPT;
+    size_t println(char) NOEXCEPT;
+    size_t println(unsigned char, int = DEC) NOEXCEPT;
+    size_t println(int, int = DEC) NOEXCEPT;
+    size_t println(unsigned int, int = DEC) NOEXCEPT;
+    size_t println(long, int = DEC) NOEXCEPT;
+    size_t println(unsigned long, int = DEC) NOEXCEPT;
+    size_t println(long long, int = DEC) NOEXCEPT;
+    size_t println(unsigned long long, int = DEC) NOEXCEPT;
+    size_t println(double, int = 2) NOEXCEPT;
+    size_t println(const Printable &) NOEXCEPT;
+    size_t println(void) NOEXCEPT;
+
+    int printf(const char *format, ...) NOEXCEPT;
+    int printf(const __FlashStringHelper *format, ...) NOEXCEPT;
+
+    virtual void flush() NOEXCEPT { /* Empty implementation for backward compatibility */ }
 };
 
 #endif

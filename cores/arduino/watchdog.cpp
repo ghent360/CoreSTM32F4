@@ -20,6 +20,8 @@
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_wwdg.h"
 
+extern "C" {
+
 static WWDG_HandleTypeDef wdHandle;
 void watchdogEnable (uint32_t timeout)
 {
@@ -45,4 +47,4 @@ void watchdogReset(void)
     HAL_WWDG_Refresh(&wdHandle);
 }
 
-// End
+} // extern "C"

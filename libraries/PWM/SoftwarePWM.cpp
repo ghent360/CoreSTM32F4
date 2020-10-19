@@ -211,7 +211,7 @@ void SPWM_Handler(HardwareTimer * notused)
 #endif
 }
 
-static void initTimer() noexcept
+static void initTimer() NOEXCEPT
 {
     for(uint32_t i = 0; i < MaxPWMChannels; i++)
         States[i].enabled = false;
@@ -238,11 +238,11 @@ void SPWMDiagnostics()
 }
 #endif
 
-SoftwarePWM::SoftwarePWM() noexcept : channel(-1), period(0xffffffff)
+SoftwarePWM::SoftwarePWM() NOEXCEPT : channel(-1), period(0xffffffff)
 {
 } 
 
-void SoftwarePWM::free() noexcept
+void SoftwarePWM::free() NOEXCEPT
 {
     if (channel >= 0)
         disable(channel);
@@ -251,7 +251,7 @@ void SoftwarePWM::free() noexcept
 }
 
 
-HybridPWMBase *SoftwarePWM::allocate(Pin pin, uint32_t freq, float value) noexcept
+HybridPWMBase *SoftwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCEPT
 {
     //debugPrintf("SWPWM allocate pin %x, freq %d\n", static_cast<int>(pin), static_cast<int>(freq));
     if (!timerReady)
@@ -267,7 +267,7 @@ HybridPWMBase *SoftwarePWM::allocate(Pin pin, uint32_t freq, float value) noexce
 
 }
 
-void SoftwarePWM::setValue(Pin pin, float value) noexcept
+void SoftwarePWM::setValue(Pin pin, float value) NOEXCEPT
 {
     if (period == 0)
     {
@@ -310,12 +310,12 @@ void SoftwarePWM::setValue(Pin pin, float value) noexcept
     }
 }
 
-void SoftwarePWM::setValue(float value) noexcept
+void SoftwarePWM::setValue(float value) NOEXCEPT
 {
     setValue(pwmPin->pin, value);
 }
 
-void SoftwarePWM::appendStatus(const StringRef& reply) noexcept
+void SoftwarePWM::appendStatus(const StringRef& reply) NOEXCEPT
 {
     if (channel >= 0)
     {

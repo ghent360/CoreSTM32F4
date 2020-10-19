@@ -16,36 +16,43 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef _WIRING_INTERRUPTS_
 #define _WIRING_INTERRUPTS_
 
-#include "Core.h"
+#include <stdint.h>
+#include "wiring_constants.h"
 
-union CallbackParameter
+#include <functional>
+
+typedef std::function<void(void) NOEXCEPT> callback_function_t;
+void attachInterrupt(uint32_t pin, callback_function_t callback, enum InterruptMode mode) NOEXCEPT;
+
+struct CallbackParameter
 {
-	void *vp;
-	uint32_t u32;
-	int32_t i32;
+  callback_function_t fp;
+  void *vp;
+  uint32_t u32;
+  int32_t i32;
 
-	CallbackParameter(void *pp) noexcept : vp(pp) { }
-	CallbackParameter(uint32_t pp) noexcept : u32(pp) { }
-	CallbackParameter(int32_t pp) noexcept : i32(pp) { }
-	CallbackParameter() noexcept : u32(0) { }
+  CallbackParameter(callback_function_t pp) : fp(pp) {}
+  CallbackParameter(void *pp) NOEXCEPT : vp(pp) { }
+  CallbackParameter(uint32_t pp) NOEXCEPT : u32(pp) { }
+  CallbackParameter(int32_t pp) NOEXCEPT : i32(pp) { }
+  CallbackParameter() NOEXCEPT : u32(0) { }
 };
 
-typedef void (*StandardCallbackFunction)(CallbackParameter) noexcept;
+void StandardCallbackFunctionPrototype(CallbackParameter) NOEXCEPT;
+using StandardCallbackFunction = decltype(&StandardCallbackFunctionPrototype);
 
-bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) noexcept;
+bool attachInterrupt(uint32_t pin, StandardCallbackFunction callback, enum InterruptMode mode, CallbackParameter param) NOEXCEPT;
 
-void detachInterrupt(uint32_t pin) noexcept;
+extern "C" {
 
+void attachInterrupt(uint32_t pin, void (*callback)(void), enum InterruptMode mode);
+void detachInterrupt(uint32_t pin);
 // Return true if we are in an interrupt service routine
-bool inInterrupt() noexcept;
+//bool inInterrupt();
 
-#ifdef __cplusplus
-
-
-#endif
+} // extern "C"
 
 #endif /* _WIRING_INTERRUPTS_ */

@@ -23,7 +23,7 @@
 //extern void __libc_init_array(void);
 //extern void init(void);
 extern "C" void UrgentInit(void);
-extern "C" void AppMain() noexcept;
+extern "C" void AppMain() NOEXCEPT;
 
 
 // Weak empty variant initialization function.
@@ -49,7 +49,7 @@ __attribute__((constructor(101))) void premain()
   SCB_EnableDCache();
 #endif
 #endif
-  UrgentInit();
+  //UrgentInit();
   //__libc_init_array();	// initialize C library and call C++ constructors for static data
   init();
 }
@@ -60,19 +60,22 @@ __attribute__((constructor(101))) void premain()
 int main(void)
 {
   initVariant();
-  AppMain();				// note: app must set up the system tick interrupt, either within FreeRTOS or by calling SysTickInit
+  //AppMain();				// note: app must set up the system tick interrupt, either within FreeRTOS or by calling SysTickInit
 
-  //setup();
+  setup();
 
   for (;;) {
 #if defined(CORE_CALLBACK)
     CoreCallback();
 #endif
-    //loop();
-    //if (serialEventRun) {
-      //serialEventRun();
-    //}
+    loop();
+    serialEventRun();
   }
 
   return 0;
+}
+
+void assert_failed(uint8_t* file, uint32_t line) __attribute__((weak));
+void assert_failed(uint8_t* file, uint32_t line) {
+  _Error_Handler(reinterpret_cast<const char*>(file), line);
 }

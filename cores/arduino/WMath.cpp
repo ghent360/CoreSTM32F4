@@ -16,43 +16,50 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <Core.h>
-#include <cstdlib>
-#include <cstdint>
-
+extern "C" {
+#include "stdlib.h"
+#include "stdint.h"
+}
 #include "WMath.h"
 
-#if SAM3XA || SAME70
-// SAM3X and SAME70 have a true random number generator
-# include "trng/trng.h"
-#endif
-
-extern "C" uint32_t random32()
+void randomSeed(uint32_t dwSeed)
 {
-#if SAM3XA || SAME70
-	while (!(TRNG->TRNG_ISR & TRNG_ISR_DATRDY)) {}
-	return (uint32_t)TRNG->TRNG_ODATA;
-#else
-	static bool isInitialised = false;
-
-	if (!isInitialised)
-	{
-		srand(SysTick->VAL);
-		isInitialised = true;
-	}
-
-	return rand();
-#endif
+  if (dwSeed != 0) {
+    srand(dwSeed) ;
+  }
 }
 
-extern int32_t random(int32_t howsmall, int32_t howbig)
+long random32(long howbig)
 {
-	if (howsmall >= howbig)
-	{
-		return howsmall;
-	}
+  if (howbig == 0) {
+    return 0 ;
+  }
 
-	return random(howbig - howsmall) + howsmall;
+  return rand() % howbig;
 }
 
-// End
+long random32(long howsmall, long howbig)
+{
+  if (howsmall >= howbig) {
+    return howsmall;
+  }
+
+  long diff = howbig - howsmall;
+
+  return random32(diff) + howsmall;
+}
+
+long map(long x, long in_min, long in_max, long out_min, long out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+uint16_t makeWord(uint16_t w)
+{
+  return w ;
+}
+
+uint16_t makeWord(uint8_t h, uint8_t l)
+{
+  return (h << 8) | l ;
+}

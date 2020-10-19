@@ -78,28 +78,28 @@ class SoftwareSerial : public Stream {
     static uint32_t cur_speed;
 
     // private methods
-    void send();
-    void recv();
-    void setTX();
-    void setRX();
-    void setSpeed(uint32_t speed);
-    void setRXTX(bool input);
-    static void handleInterrupt(HardwareTimer *timer);
+    void send() NOEXCEPT;
+    void recv() NOEXCEPT;
+    void setTX() NOEXCEPT;
+    void setRX() NOEXCEPT;
+    void setSpeed(uint32_t speed) NOEXCEPT;
+    void setRXTX(bool input) NOEXCEPT;
+    static void handleInterrupt() NOEXCEPT;
 
   public:
     // public methods
 
-    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false);
+    SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false) NOEXCEPT;
     virtual ~SoftwareSerial();
-    void begin(long speed);
-    bool listen();
-    void end();
-    bool isListening()
+    void begin(long speed) NOEXCEPT;
+    bool listen() NOEXCEPT;
+    void end() NOEXCEPT;
+    bool isListening() NOEXCEPT
     {
       return active_listener == this;
     }
-    bool stopListening();
-    bool overflow()
+    bool stopListening() NOEXCEPT;
+    bool overflow() NOEXCEPT
     {
       bool ret = _buffer_overflow;
       if (ret) {
@@ -107,16 +107,18 @@ class SoftwareSerial : public Stream {
       }
       return ret;
     }
-    int peek();
+    int peek() NOEXCEPT;
 
-    virtual size_t write(uint8_t byte);
-    virtual int read();
-    virtual int available();
-    virtual void flush();
-    operator bool()
+    virtual size_t write(uint8_t byte) NOEXCEPT;
+    virtual int read() NOEXCEPT;
+    virtual int available() NOEXCEPT;
+    virtual void flush() NOEXCEPT;
+    operator bool() NOEXCEPT
     {
       return true;
     }
+
+    static void setInterruptPriority(uint32_t preemptPriority, uint32_t subPriority) NOEXCEPT;
 
     using Print::write;
 };

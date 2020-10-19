@@ -20,11 +20,13 @@
 #ifndef Core_h
 #define Core_h
 
+#ifdef USE_ECV
 #include "ecv.h"		// macros for Escher C/C++ Verifier design-by-contract annotations
 #undef array
 #undef yield			// eCv definition clashes with function 'yield' in wiring.c (can use _ecv_yield instead within annotations)
 #undef value			// needed because we include <optional> in some projects
 #undef result
+#endif
 
 //#include "compiler.h"
 
@@ -44,8 +46,7 @@ extern "C"{
 
 //#include "asf.h"
 
-void yield(void) noexcept;
-void CoreSysTick(void) noexcept;
+void yield(void);
 
 typedef PinName Pin;
 static const Pin NoPin = NC;
@@ -72,6 +73,7 @@ enum SSPChannel : uint8_t
     // Not defined
     SSPNONE = 0xff
 };
+#if 0
 // Definitions for PWM channels
 enum EPWMChannel : int8_t
 {
@@ -119,6 +121,7 @@ enum ETCChannel : int8_t
   TC3_CHB11
 #endif
 };
+#endif
 
 typedef uint32_t AnalogChannelNumber;
 constexpr AnalogChannelNumber NO_ADC = (AnalogChannelNumber)0xffffffff;
@@ -140,8 +143,10 @@ struct PinDescription
 	uint32_t ulPinConfiguration;
 	uint8_t ulPinAttribute;
 	AnalogChannelNumber ulADCChannelNumber; // ADC or DAC channel number in the SAM device
+#if 0  
 	EPWMChannel ulPWMChannel;
 	ETCChannel ulTCChannel;
+#endif  
 };
 
 /* Pins table to be instantiated into variant.cpp */
@@ -155,12 +160,6 @@ extern const PinDescription g_APinDescription[];
 
 // Include board variant
 #include "variant.h"
-#define SAM4E	0
-#define SAM4S	0
-#define SAM3XA	0
-#define SAME70	0
-#define SAME5x  0
-#define SAMC21  0
 #include "wiring.h"
 #include "wiring_digital.h"
 #include "watchdog.h"

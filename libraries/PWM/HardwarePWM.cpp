@@ -20,18 +20,18 @@ HardwareTimer Timer12(TIM12);
 HardwareTimer Timer13(TIM13);
 HardwareTimer Timer14(TIM14);
 
-HardwarePWM::HardwarePWM() noexcept : timer(nullptr), channel(0)
+HardwarePWM::HardwarePWM() NOEXCEPT : timer(nullptr), channel(0)
 {
 } 
 
-void HardwarePWM::free() noexcept
+void HardwarePWM::free() NOEXCEPT
 {
     if (timer) timer->setMode(channel, TIMER_DISABLED);
     timer = nullptr;
     channel = 0;
 }
 
-HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) noexcept
+HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCEPT
 {
     //debugPrintf("HWPWM allocate pin %x, freq %d\n", static_cast<int>(pin), static_cast<int>(freq));
     // first find out if we have a timer for this pin
@@ -79,12 +79,12 @@ HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) noexce
     return &PWMChans[free];
 }
 
-void HardwarePWM::setValue(float value) noexcept
+void HardwarePWM::setValue(float value) NOEXCEPT
 {
     timer->setCaptureCompare(channel, (uint32_t)(value*PWM_MAX_DUTY_CYCLE), RESOLUTION_12B_COMPARE_FORMAT);
 }
 
-void HardwarePWM::appendStatus(const StringRef& reply) noexcept
+void HardwarePWM::appendStatus(const StringRef& reply) NOEXCEPT
 {
     TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(pwmPin->pin, PinMap_PWM);
     uint32_t index = get_timer_index(instance);

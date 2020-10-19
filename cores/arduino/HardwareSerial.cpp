@@ -26,129 +26,135 @@
 #include "Arduino.h"
 #include "HardwareSerial.h"
 
-#if defined(HAL_UART_MODULE_ENABLED)
+#if defined(HAL_UART_MODULE_ENABLED) && !defined(HAL_UART_MODULE_ONLY)
 #if defined(HAVE_HWSERIAL1) || defined(HAVE_HWSERIAL2) || defined(HAVE_HWSERIAL3) ||\
-    defined(HAVE_HWSERIAL4) || defined(HAVE_HWSERIAL5) || defined(HAVE_HWSERIAL6) ||\
-    defined(HAVE_HWSERIAL7) || defined(HAVE_HWSERIAL8) || defined(HAVE_HWSERIAL9) ||\
-    defined(HAVE_HWSERIAL10) || defined(HAVE_HWSERIALLP1)
-// SerialEvent functions are weak, so when the user doesn't define them,
-// the linker just sets their address to 0 (which is checked below).
-#if defined(HAVE_HWSERIAL1)
-HardwareSerial Serial1(USART1);
-void serialEvent1() __attribute__((weak));
-#endif
+  defined(HAVE_HWSERIAL4) || defined(HAVE_HWSERIAL5) || defined(HAVE_HWSERIAL6) ||\
+  defined(HAVE_HWSERIAL7) || defined(HAVE_HWSERIAL8) || defined(HAVE_HWSERIAL9) ||\
+  defined(HAVE_HWSERIAL10) || defined(HAVE_HWSERIALLP1)
+  // SerialEvent functions are weak, so when the user doesn't define them,
+  // the linker just sets their address to 0 (which is checked below).
+  #if defined(HAVE_HWSERIAL1)
+    HardwareSerial Serial1(USART1);
+    void serialEvent1() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL2)
-HardwareSerial Serial2(USART2);
-void serialEvent2() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL2)
+    HardwareSerial Serial2(USART2);
+    void serialEvent2() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL3)
-HardwareSerial Serial3(USART3);
-void serialEvent3() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL3)
+    HardwareSerial Serial3(USART3);
+    void serialEvent3() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL4)
-#if defined(USART4)
-HardwareSerial Serial4(USART4);
-#else
-HardwareSerial Serial4(UART4);
-#endif
-void serialEvent4() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL4)
+    #if defined(USART4)
+      HardwareSerial Serial4(USART4);
+    #else
+      HardwareSerial Serial4(UART4);
+    #endif
+    void serialEvent4() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL5)
-#if defined(USART5)
-HardwareSerial Serial5(USART5);
-#else
-HardwareSerial Serial5(UART5);
-#endif
-void serialEvent5() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL5)
+    #if defined(USART5)
+      HardwareSerial Serial5(USART5);
+    #else
+      HardwareSerial Serial5(UART5);
+    #endif
+    void serialEvent5() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL6)
-HardwareSerial Serial6(USART6);
-void serialEvent6() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL6)
+    HardwareSerial Serial6(USART6);
+    void serialEvent6() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL7)
-#if defined(USART7)
-HardwareSerial Serial7(USART7);
-#else
-HardwareSerial Serial7(UART7);
-#endif
-void serialEvent7() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL7)
+    #if defined(USART7)
+      HardwareSerial Serial7(USART7);
+    #else
+      HardwareSerial Serial7(UART7);
+    #endif
+    void serialEvent7() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL8)
-#if defined(USART8)
-HardwareSerial Serial8(USART8);
-#else
-HardwareSerial Serial8(UART8);
-#endif
-void serialEvent8() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL8)
+    #if defined(USART8)
+      HardwareSerial Serial8(USART8);
+    #else
+      HardwareSerial Serial8(UART8);
+    #endif
+    void serialEvent8() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL9)
-HardwareSerial Serial9(UART9);
-void serialEvent9() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL9)
+    HardwareSerial Serial9(UART9);
+    void serialEvent9() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIAL10)
-HardwareSerial Serial10(UART10);
-void serialEvent10() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIAL10)
+    HardwareSerial Serial10(UART10);
+    void serialEvent10() __attribute__((weak));
+  #endif
 
-#if defined(HAVE_HWSERIALLP1)
-HardwareSerial SerialLP1(LPUART1);
-void serialEventLP1() __attribute__((weak));
-#endif
+  #if defined(HAVE_HWSERIALLP1)
+    HardwareSerial SerialLP1(LPUART1);
+    void serialEventLP1() __attribute__((weak));
+  #endif
 #endif // HAVE_HWSERIALx
 
 // Constructors ////////////////////////////////////////////////////////////////
-HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx)
+HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx) NOEXCEPT
 {
-  _serial.pin_rx = digitalPinToPinName(_rx);
-  _serial.pin_tx = digitalPinToPinName(_tx);
-  init();
+  init(digitalPinToPinName(_rx), digitalPinToPinName(_tx));
 }
 
-HardwareSerial::HardwareSerial(PinName _rx, PinName _tx)
+HardwareSerial::HardwareSerial(PinName _rx, PinName _tx) NOEXCEPT
 {
-  _serial.pin_rx = _rx;
-  _serial.pin_tx = _tx;
-  init();
+  init(_rx, _tx);
 }
 
-HardwareSerial::HardwareSerial(void *peripheral)
+HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) NOEXCEPT
 {
+  // If PIN_SERIALy_RX is not defined assume half-duplex
+  _serial.pin_rx = NC;
   // If Serial is defined in variant set
   // the Rx/Tx pins for com port if defined
-#if defined(Serial) && defined(PIN_SERIAL_RX) && defined(PIN_SERIAL_TX)
+#if defined(Serial) && defined(PIN_SERIAL_TX)
   if ((void *)this == (void *)&Serial) {
+#if defined(PIN_SERIAL_RX)
     setRx(PIN_SERIAL_RX);
+#endif
     setTx(PIN_SERIAL_TX);
   } else
 #endif
-#if defined(PIN_SERIAL1_RX) && defined(PIN_SERIAL1_TX) && defined(USART1_BASE)
+#if defined(PIN_SERIAL1_TX) && defined(USART1_BASE)
     if (peripheral == USART1) {
+#if defined(PIN_SERIAL1_RX)
       setRx(PIN_SERIAL1_RX);
+#endif
       setTx(PIN_SERIAL1_TX);
     } else
 #endif
-#if defined(PIN_SERIAL2_RX) && defined(PIN_SERIAL2_TX) && defined(USART2_BASE)
+#if defined(PIN_SERIAL2_TX) && defined(USART2_BASE)
       if (peripheral == USART2) {
+#if defined(PIN_SERIAL2_RX)
         setRx(PIN_SERIAL2_RX);
+#endif
         setTx(PIN_SERIAL2_TX);
       } else
 #endif
-#if defined(PIN_SERIAL3_RX) && defined(PIN_SERIAL3_TX) && defined(USART3_BASE)
+#if defined(PIN_SERIAL3_TX) && defined(USART3_BASE)
         if (peripheral == USART3) {
+#if defined(PIN_SERIAL3_RX)
           setRx(PIN_SERIAL3_RX);
+#endif
           setTx(PIN_SERIAL3_TX);
         } else
 #endif
-#if defined(PIN_SERIAL4_RX) && defined(PIN_SERIAL4_TX) &&\
+#if defined(PIN_SERIAL4_TX) &&\
    (defined(USART4_BASE) || defined(UART4_BASE))
 #if defined(USART4_BASE)
           if (peripheral == USART4)
@@ -156,11 +162,13 @@ HardwareSerial::HardwareSerial(void *peripheral)
           if (peripheral == UART4)
 #endif
           {
+#if defined(PIN_SERIAL4_RX)
             setRx(PIN_SERIAL4_RX);
+#endif
             setTx(PIN_SERIAL4_TX);
           } else
 #endif
-#if defined(PIN_SERIAL5_RX) && defined(PIN_SERIAL5_TX) &&\
+#if defined(PIN_SERIAL5_TX) &&\
    (defined(USART5_BASE) || defined(UART5_BASE))
 #if defined(USART5_BASE)
             if (peripheral == USART5)
@@ -168,17 +176,21 @@ HardwareSerial::HardwareSerial(void *peripheral)
             if (peripheral == UART5)
 #endif
             {
+#if defined(PIN_SERIAL5_RX)
               setRx(PIN_SERIAL5_RX);
+#endif
               setTx(PIN_SERIAL5_TX);
             } else
 #endif
-#if defined(PIN_SERIAL6_RX) && defined(PIN_SERIAL6_TX) && defined(USART6_BASE)
+#if defined(PIN_SERIAL6_TX) && defined(USART6_BASE)
               if (peripheral == USART6) {
+#if defined(PIN_SERIAL6_RX)
                 setRx(PIN_SERIAL6_RX);
+#endif
                 setTx(PIN_SERIAL6_TX);
               } else
 #endif
-#if defined(PIN_SERIAL7_RX) && defined(PIN_SERIAL7_TX) &&\
+#if defined(PIN_SERIAL7_TX) &&\
    (defined(USART7_BASE) || defined(UART7_BASE))
 #if defined(USART7_BASE)
                 if (peripheral == USART7)
@@ -186,11 +198,13 @@ HardwareSerial::HardwareSerial(void *peripheral)
                 if (peripheral == UART7)
 #endif
                 {
+#if defined(PIN_SERIAL7_RX)
                   setRx(PIN_SERIAL7_RX);
+#endif
                   setTx(PIN_SERIAL7_TX);
                 } else
 #endif
-#if defined(PIN_SERIAL8_RX) && defined(PIN_SERIAL8_TX) &&\
+#if defined(PIN_SERIAL8_TX) &&\
    (defined(USART8_BASE) || defined(UART8_BASE))
 #if defined(USART8_BASE)
                   if (peripheral == USART8)
@@ -198,25 +212,33 @@ HardwareSerial::HardwareSerial(void *peripheral)
                   if (peripheral == UART8)
 #endif
                   {
+#if defined(PIN_SERIAL8_RX)
                     setRx(PIN_SERIAL8_RX);
+#endif
                     setTx(PIN_SERIAL8_TX);
                   } else
 #endif
-#if defined(PIN_SERIAL9_RX) && defined(PIN_SERIAL9_TX) && defined(UART9)
+#if defined(PIN_SERIAL9_TX) && defined(UART9)
                     if (peripheral == UART9) {
+#if defined(PIN_SERIAL9_RX)
                       setRx(PIN_SERIAL9_RX);
+#endif
                       setTx(PIN_SERIAL9_TX);
                     } else
 #endif
-#if defined(PIN_SERIAL10_RX) && defined(PIN_SERIAL10_TX) && defined(UART10)
+#if defined(PIN_SERIAL10_TX) && defined(UART10)
                       if (peripheral == UART10) {
+#if defined(PIN_SERIAL10_RX)
                         setRx(PIN_SERIAL10_RX);
+#endif
                         setTx(PIN_SERIAL10_TX);
                       } else
 #endif
-#if defined(PIN_SERIALLP1_RX) && defined(PIN_SERIALLP1_TX) && defined(LPUART1_BASE)
+#if defined(PIN_SERIALLP1_TX) && defined(LPUART1_BASE)
                         if (peripheral == LPUART1) {
+#if defined(PIN_SERIALLP1_RX)
                           setRx(PIN_SERIALLP1_RX);
+#endif
                           setTx(PIN_SERIALLP1_TX);
                         } else
 #endif
@@ -225,11 +247,30 @@ HardwareSerial::HardwareSerial(void *peripheral)
                           _serial.pin_rx = pinmap_pin(peripheral, PinMap_UART_RX);
                           _serial.pin_tx = pinmap_pin(peripheral, PinMap_UART_TX);
                         }
-  init();
+  if (halfDuplex == HALF_DUPLEX_ENABLED) {
+    _serial.pin_rx = NC;
+  }
+  init(_serial.pin_rx, _serial.pin_tx);
 }
 
-void HardwareSerial::init(void)
+HardwareSerial::HardwareSerial(uint32_t _rxtx) NOEXCEPT
 {
+  init(NC, digitalPinToPinName(_rxtx));
+}
+
+HardwareSerial::HardwareSerial(PinName _rxtx) NOEXCEPT
+{
+  init(NC, _rxtx);
+}
+
+void HardwareSerial::init(PinName _rx, PinName _tx) NOEXCEPT
+{
+  if (_rx == _tx) {
+    _serial.pin_rx = NC;
+  } else {
+    _serial.pin_rx = _rx;
+  }
+  _serial.pin_tx = _tx;
   _serial.rx_buff = _rx_buffer;
   _serial.rx_head = 0;
   _serial.rx_tail = 0;
@@ -238,7 +279,7 @@ void HardwareSerial::init(void)
   _serial.tx_tail = 0;
 }
 
-void HardwareSerial::configForLowPower(void)
+void HardwareSerial::configForLowPower(void) NOEXCEPT
 {
 #if defined(HAL_PWR_MODULE_ENABLED) && defined(UART_IT_WUF)
   // Reconfigure properly Serial instance to use HSI as clock source
@@ -250,7 +291,7 @@ void HardwareSerial::configForLowPower(void)
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
 
-void HardwareSerial::_rx_complete_irq(serial_t *obj)
+void HardwareSerial::_rx_complete_irq(serial_t *obj) NOEXCEPT
 {
   // No Parity error, read byte and store it in the buffer if there is room
   unsigned char c;
@@ -272,7 +313,7 @@ void HardwareSerial::_rx_complete_irq(serial_t *obj)
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
 
-int HardwareSerial::_tx_complete_irq(serial_t *obj)
+int HardwareSerial::_tx_complete_irq(serial_t *obj) NOEXCEPT
 {
   // If interrupts are enabled, there must be more data in the output
   // buffer. Send the next byte
@@ -287,7 +328,7 @@ int HardwareSerial::_tx_complete_irq(serial_t *obj)
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud, uint8_t config)
+void HardwareSerial::begin(unsigned long baud, uint8_t config) NOEXCEPT
 {
   uint32_t databits = 0;
   uint32_t stopbits = 0;
@@ -347,10 +388,11 @@ void HardwareSerial::begin(unsigned long baud, uint8_t config)
   }
 
   uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
+  enableHalfDuplexRx();
   uart_attach_rx_callback(&_serial, _rx_complete_irq);
 }
 
-void HardwareSerial::end()
+void HardwareSerial::end() NOEXCEPT
 {
   // wait for transmission of outgoing data
   flush();
@@ -361,12 +403,12 @@ void HardwareSerial::end()
   _serial.rx_head = _serial.rx_tail;
 }
 
-int HardwareSerial::available(void)
+int HardwareSerial::available(void) NOEXCEPT
 {
   return ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _serial.rx_head - _serial.rx_tail)) % SERIAL_RX_BUFFER_SIZE;
 }
 
-int HardwareSerial::peek(void)
+int HardwareSerial::peek(void) NOEXCEPT
 {
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
@@ -375,8 +417,9 @@ int HardwareSerial::peek(void)
   }
 }
 
-int HardwareSerial::read(void)
+int HardwareSerial::read(void) NOEXCEPT
 {
+  enableHalfDuplexRx();
   // if the head isn't ahead of the tail, we don't have any characters
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
@@ -387,7 +430,7 @@ int HardwareSerial::read(void)
   }
 }
 
-int HardwareSerial::availableForWrite(void)
+int HardwareSerial::availableForWrite(void) NOEXCEPT
 {
   tx_buffer_index_t head = _serial.tx_head;
   tx_buffer_index_t tail = _serial.tx_tail;
@@ -398,7 +441,7 @@ int HardwareSerial::availableForWrite(void)
   return tail - head - 1;
 }
 
-void HardwareSerial::flush()
+void HardwareSerial::flush() NOEXCEPT
 {
   // If we have never written a byte, no need to flush. This special
   // case is needed since there is no way to force the TXC (transmit
@@ -414,9 +457,15 @@ void HardwareSerial::flush()
   // the hardware finished tranmission (TXC is set).
 }
 
-size_t HardwareSerial::write(uint8_t c)
+size_t HardwareSerial::write(uint8_t c) NOEXCEPT
 {
   _written = true;
+  if (isHalfDuplex()) {
+    if (_rx_enabled) {
+      _rx_enabled = false;
+      uart_enable_tx(&_serial);
+    }
+  }
 
   tx_buffer_index_t i = (_serial.tx_head + 1) % SERIAL_TX_BUFFER_SIZE;
 
@@ -436,34 +485,58 @@ size_t HardwareSerial::write(uint8_t c)
   return 1;
 }
 
-void HardwareSerial::setRx(uint32_t _rx)
+void HardwareSerial::setRx(uint32_t _rx) NOEXCEPT
 {
   _serial.pin_rx = digitalPinToPinName(_rx);
 }
 
-void HardwareSerial::setTx(uint32_t _tx)
+void HardwareSerial::setTx(uint32_t _tx) NOEXCEPT
 {
   _serial.pin_tx = digitalPinToPinName(_tx);
 }
 
-void HardwareSerial::setRx(PinName _rx)
+void HardwareSerial::setRx(PinName _rx) NOEXCEPT
 {
   _serial.pin_rx = _rx;
 }
 
-void HardwareSerial::setTx(PinName _tx)
+void HardwareSerial::setTx(PinName _tx) NOEXCEPT
 {
   _serial.pin_tx = _tx;
 }
 
-void HardwareSerial::setInterruptPriority(uint32_t priority) noexcept
+void HardwareSerial::setInterruptPriority(uint32_t priority) NOEXCEPT
 {
   uart_set_interrupt_priority(&_serial, priority);
 }
 
-uint32_t HardwareSerial::getInterruptPriority() noexcept
+uint32_t HardwareSerial::getInterruptPriority() NOEXCEPT
 {
   // FIXME need to actually get the priority
   return 0;
 }
-#endif // HAL_UART_MODULE_ENABLED
+
+void HardwareSerial::setHalfDuplex(void) NOEXCEPT
+{
+  _serial.pin_rx = NC;
+}
+
+bool HardwareSerial::isHalfDuplex(void) const NOEXCEPT
+{
+  return _serial.pin_rx == NC;
+}
+
+void HardwareSerial::enableHalfDuplexRx(void) NOEXCEPT
+{
+  if (isHalfDuplex()) {
+    // In half-duplex mode we have to wait for all TX characters to
+    // be transmitted before we can receive data.
+    flush();
+    if (!_rx_enabled) {
+      _rx_enabled = true;
+      uart_enable_rx(&_serial);
+    }
+  }
+}
+
+#endif // HAL_UART_MODULE_ENABLED && !HAL_UART_MODULE_ONLY
