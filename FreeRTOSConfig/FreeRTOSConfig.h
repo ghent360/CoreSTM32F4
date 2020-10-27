@@ -38,12 +38,6 @@
 #endif
 #endif
 
-/* Atmel library includes. */
-#if __LPC17xx__ || defined(TARGET_STM32F4)
-
-#else
-# include <asf.h>
-#endif
 /*-----------------------------------------------------------
  * Application specific definitions.
  *
@@ -64,11 +58,7 @@
 
 #define configUSE_PREEMPTION                     1
 #define configSUPPORT_STATIC_ALLOCATION          1
-#if __LPC17xx__
-    #define configSUPPORT_DYNAMIC_ALLOCATION     1
-#else
-    #define configSUPPORT_DYNAMIC_ALLOCATION     0
-#endif
+#define configSUPPORT_DYNAMIC_ALLOCATION         0
 #define configUSE_QUEUE_SETS                     1
 #define configUSE_IDLE_HOOK                      0
 #define configUSE_TICK_HOOK                      1
@@ -76,6 +66,7 @@
 #define configTICK_RATE_HZ                       ((TickType_t)1000)
 #define configMAX_PRIORITIES                     ( 6 )
 #define configMINIMAL_STACK_SIZE                 ((uint16_t)120)
+
 //SD:: now using Heap5 
 //#define configTOTAL_HEAP_SIZE                  ((size_t)1024))
 #define configMAX_TASK_NAME_LEN                  ( 16 )
@@ -119,13 +110,7 @@ FreeRTOS/Source/tasks.c for limitations. */
 #define configUSE_TIMERS                         0
 #define configTIMER_TASK_PRIORITY                ( 2 )
 #define configTIMER_QUEUE_LENGTH                 5
-#if __LPC17xx__  || defined(TARGET_STM32F4)
-// TODO::: vTaskList says using 32words.... configTIMER_TASK_STACK_DEPTH currently set to 120words
-  #define configTIMER_TASK_STACK_DEPTH           ( /*50*/ 120 )
-#else
-  #define configTIMER_TASK_STACK_DEPTH           ( configMINIMAL_STACK_SIZE )
-
-#endif
+#define configTIMER_TASK_STACK_DEPTH             ( configMINIMAL_STACK_SIZE )
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
@@ -145,22 +130,16 @@ to exclude the API function. */
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
 	/* __BVIC_PRIO_BITS will be specified when CMSIS is being used. */
- #define configPRIO_BITS         __NVIC_PRIO_BITS
-#else
- #if __LPC17xx__ 
-   #define configPRIO_BITS       5        /* 32 priority levels */
- #else
-   #define configPRIO_BITS       4        /* 15 priority levels */
- #endif
+	#define configPRIO_BITS       		__NVIC_PRIO_BITS
+#else    
+  #define configPRIO_BITS               4        /* 15 priority levels */
 #endif
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
 function. */
-#if __LPC17xx__
- #define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   31
-#else
- #define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   15
-#endif
+
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY			0xf
+
 
 /* The highest interrupt priority that can be used by any interrupt service
 routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
