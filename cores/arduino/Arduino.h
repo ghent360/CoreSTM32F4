@@ -33,8 +33,6 @@
   #include "SrcWrapper.h"
 #endif
 
-#include "wiring.h"
-
 /* sketch */
 
 #ifdef __cplusplus
@@ -55,4 +53,6 @@ void yield(void);
 // Include pins variant
 #include "pins_arduino.h"
 #include "Core.h"
+
+#include "wiring.h"
 #endif // Arduino_h
