@@ -292,6 +292,7 @@ typedef struct _USBD_HandleTypeDef
   void                    *pData;
   void                    *pBosDesc;
   void                    *pConfDesc;
+  void                    *pPreAllocatedClassData;
 } USBD_HandleTypeDef;
 
 /**

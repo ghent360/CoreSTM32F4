@@ -160,6 +160,10 @@ extern const PinDescription g_APinDescription[];
 
 // Include board variant
 #include "variant.h"
+
+// Space reserved for Handler stack in bytes
+#define SystemStackSize (1024)
+
 #include "wiring.h"
 #include "wiring_digital.h"
 #include "watchdog.h"

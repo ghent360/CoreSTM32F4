@@ -470,6 +470,16 @@ static uint8_t  USBD_CDC_Init(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
   /* Init  physical Interface components */
   ((USBD_CDC_ItfTypeDef *)pdev->pUserData)->Init();
 
+  // FIXME: weird USB code??
+#if 0
+  if (pdev->pPreAllocatedClassData == NULL) {
+    pdev->pClassData = USBD_malloc(sizeof(USBD_CDC_HandleTypeDef));
+  } else {
+    pdev->pClassData = pdev->pPreAllocatedClassData;
+    USBD_memset(pdev->pClassData, 0, sizeof(USBD_CDC_HandleTypeDef));
+  }
+#endif
+
   /* Init Xfer states */
   hcdc->TxState = 0U;
   hcdc->RxState = 0U;
@@ -516,6 +526,11 @@ static uint8_t  USBD_CDC_DeInit(USBD_HandleTypeDef *pdev, uint8_t cfgidx)
   if (pdev->pClassData != NULL) {
     ((USBD_CDC_ItfTypeDef *)pdev->pUserData)->DeInit();
     (void)USBD_free(pdev->pClassData);
+  // FIXME: weird USB code??
+#if 0    
+    if (pdev->pPreAllocatedClassData == NULL)
+      USBD_free(pdev->pClassData);
+#endif
     pdev->pClassData = NULL;
   }
 
