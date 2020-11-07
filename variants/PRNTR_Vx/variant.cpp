@@ -213,7 +213,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   HAL_NVIC_SetPriority(TIM6_DAC_IRQn, TickPriority ,0);
   HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
   uwTickPrio = TickPriority;
-  
+
   __HAL_RCC_TIM6_CLK_ENABLE();
 
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);

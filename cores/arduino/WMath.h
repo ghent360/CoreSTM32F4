@@ -61,15 +61,15 @@ extern "C++" {
 		return random32(static_cast<long>(howbig));
 	}
 
-	static int32_t random(int32_t howsmall, int32_t howbig) NOEXCEPT {
+	static inline int32_t random(int32_t howsmall, int32_t howbig) NOEXCEPT {
 		return random32(static_cast<long>(howsmall), static_cast<long>(howbig));
 	}
 
 	// Note that constrain<float> will return NaN for a NaN input because of the way we define min<float> and max<float>
-	template<typename T, typename LO, typename HI>
-	inline constexpr const T& constrain(const T& val, const LO& vmin, const HI& vmax) NOEXCEPT {
-		//return std::clamp(val, vmin, vmax);
-		return (val < vmin) ? vmin : (val > vmax) ? vmax : val;
+	template<typename T>
+	inline constexpr const T& constrain(const T& val, const T& vmin, const T& vmax) NOEXCEPT {
+		return std::clamp(val, vmin, vmax);
+		//return (val < vmin) ? vmin : (val > vmax) ? vmax : val;
 	}
 
 	static inline constexpr float fsquare(float arg) NOEXCEPT {

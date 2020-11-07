@@ -96,6 +96,7 @@ class TwoWire : public Stream {
     uint8_t endTransmission(uint8_t) NOEXCEPT;
     uint8_t requestFrom(uint8_t, uint8_t) NOEXCEPT;
     uint8_t requestFrom(uint8_t, uint8_t, uint8_t) NOEXCEPT;
+    uint8_t requestFrom(uint8_t, size_t, bool) NOEXCEPT;
     uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t) NOEXCEPT;
     uint8_t requestFrom(int, int) NOEXCEPT;
     uint8_t requestFrom(int, int, int) NOEXCEPT;
