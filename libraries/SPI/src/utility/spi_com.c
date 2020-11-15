@@ -155,10 +155,10 @@ uint32_t spi_getClkFreq(spi_t *obj)
   * @param  msb : set to 1 in msb first
   * @retval None
   */
-void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uint8_t msb)
+bool spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uint8_t msb)
 {
   if (obj == NULL) {
-    return;
+    return false;
   }
 
   SPI_HandleTypeDef *handle = &(obj->handle);
@@ -174,7 +174,7 @@ void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uin
   /* Pins MOSI/MISO/SCLK must not be NP. ssel can be NP. */
   if (spi_mosi == NP || spi_miso == NP || spi_sclk == NP) {
     core_debug("ERROR: at least one SPI pin has no peripheral\n");
-    return;
+    return false;
   }
 
   SPI_TypeDef *spi_data = pinmap_merge_peripheral(spi_mosi, spi_miso);
@@ -185,7 +185,7 @@ void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uin
   // Are all pins connected to the same SPI instance?
   if (spi_data == NP || spi_cntl == NP || obj->spi == NP) {
     core_debug("ERROR: SPI pins mismatch\n");
-    return;
+    return false;
   }
 
   // Configure the SPI pins
@@ -308,6 +308,7 @@ void spi_init(spi_t *obj, uint32_t spimode, uint32_t speed, spi_mode_e mode, uin
 
   /* In order to set correctly the SPI polarity we need to enable the peripheral */
   __HAL_SPI_ENABLE(handle);
+  return true;
 }
 
 /**

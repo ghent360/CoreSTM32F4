@@ -170,11 +170,12 @@ void HardwareSPI::configureDevice(uint32_t deviceMode, uint32_t bits, uint32_t c
             spi_deinit(&spi);
         }
         spi.pin_ssel = cs;
-        spi_init(&spi, deviceMode, bitRate, (spi_mode_e)clockMode, 1);
-        initComplete = true;
-        curBitRate = bitRate;
-        curBits = bits;
-        curClockMode = clockMode;
+        if (spi_init(&spi, deviceMode, bitRate, (spi_mode_e)clockMode, 1)) {
+            initComplete = true;
+            curBitRate = bitRate;
+            curBits = bits;
+            curClockMode = clockMode;
+        }
     }
 }
 

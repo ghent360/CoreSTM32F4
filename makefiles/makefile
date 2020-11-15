@@ -13,7 +13,7 @@ NETWORK ?= ESP8266WIFI
 
 TMC22XX ?= true
 
-STARTUP_DELAY ?= -DSTARTUP_DELAY=10000
+#STARTUP_DELAY ?= -DSTARTUP_DELAY=10000
 
 #Comment out to show compilation commands (verbose)
 V=@
