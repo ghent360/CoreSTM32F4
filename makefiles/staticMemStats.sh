@@ -36,5 +36,5 @@ END {
 }
 EOM
 #arm-none-eabi-nm -S --size-sort -s $1 -t d| grep " b \| B " | awk "$MEMSCR"
-arm-none-eabi-nm -S --size-sort -s $1 -t d| awk "$MEMSCR"
+arm-none-eabi-nm -S --size-sort -s "$1" -t d| awk "$MEMSCR"
 
