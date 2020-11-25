@@ -24,28 +24,28 @@ extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf
 // Analog write to DAC, PWM, TC or plain output pin
 // Setting the frequency of a TC or PWM pin to zero resets it so that the next call to AnalogOut with a non-zero frequency
 // will re-initialise it. The pinMode function relies on this.
-void AnalogOut(Pin pin, float ulValue, PwmFrequency freq)
+void AnalogOut(uint32_t ulPin, float ulValue, PwmFrequency freq)
 {
-	if (pin == NoPin) return;
+	if (ulPin == (uint32_t)NC) return;
 	ulValue = constrain<float>(ulValue, 0.0, 1.0);
-	HybridPWMPin* hp = HybridPWMPin::find(pin);
+	HybridPWMPin* hp = HybridPWMPin::find(ulPin);
 	if (hp == nullptr)
 	{
-		debugPrintf("Trying set set analog value for unallocated pin %x\n", static_cast<int>(pin));
+		debugPrintf("Trying set set analog value for unallocated pin %lx\n", ulPin);
 		return;
 	}
 	hp->set(ulValue, freq);
 }
 
-void ReleasePWMPin(Pin pin)
+void ReleasePWMPin(uint32_t ulPin)
 {
-	HybridPWMPin* hp = HybridPWMPin::find(pin);
+	HybridPWMPin* hp = HybridPWMPin::find(ulPin);
 	if (hp == nullptr)
 	{
-		debugPrintf("Release of unallocated PWM pin %x\n", static_cast<int>(pin));
+		debugPrintf("Release of unallocated PWM pin %lx\n", ulPin);
 		return;
 	}
-	debugPrintf("Release of allocated PWM pin %x\n", static_cast<int>(pin));
+	debugPrintf("Release of allocated PWM pin %lx\n", ulPin);
 	hp->free();
 }
 // End
