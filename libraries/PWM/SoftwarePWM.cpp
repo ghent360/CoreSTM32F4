@@ -95,9 +95,9 @@ static void disable(int chan)
     updateActive();
 }
 
-static int enable(Pin pin, uint32_t onTime, uint32_t offTime)
+static int enable(uint32_t ulPin, uint32_t onTime, uint32_t offTime)
 {
-    PinName pinName = digitalPinToPinName(pin);
+    PinName pinName = digitalPinToPinName(ulPin);
     // find a free slot
     for(uint32_t i = 0; i < MaxPWMChannels; i++)
         if (!States[i].enabled)
@@ -251,7 +251,7 @@ void SoftwarePWM::free() NOEXCEPT
 }
 
 
-HybridPWMBase *SoftwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCEPT
+HybridPWMBase *SoftwarePWM::allocate(uint32_t ulPin, uint32_t freq, float value) NOEXCEPT
 {
     //debugPrintf("SWPWM allocate pin %x, freq %d\n", static_cast<int>(pin), static_cast<int>(freq));
     if (!timerReady)
@@ -260,18 +260,18 @@ HybridPWMBase *SoftwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCE
         if (PWMChans[i].period == 0xffffffff)
         {
             PWMChans[i].period = (freq!=0)?(1000000/freq):0;
-            PWMChans[i].setValue(pin, value);
+            PWMChans[i].setValue(ulPin, value);
             return &PWMChans[i];
         }
     return nullptr;
 
 }
 
-void SoftwarePWM::setValue(Pin pin, float value) NOEXCEPT
+void SoftwarePWM::setValue(uint32_t ulPin, float value) NOEXCEPT
 {
     if (period == 0)
     {
-        pinMode(pin, (value < 0.5) ? OUTPUT_LOW : OUTPUT_HIGH);
+        pinMode(ulPin, (value < 0.5) ? OUTPUT_LOW : OUTPUT_HIGH);
         return;
     }
     uint32_t onTime = (uint32_t)(period * value);
@@ -285,7 +285,7 @@ void SoftwarePWM::setValue(Pin pin, float value) NOEXCEPT
             disable(channel);
             channel = -1;
         }
-        pinMode(pin, OUTPUT_LOW);
+        pinMode(ulPin, OUTPUT_LOW);
     }
     else if (onTime == period)
     {
@@ -295,14 +295,14 @@ void SoftwarePWM::setValue(Pin pin, float value) NOEXCEPT
             channel = -1;
         }
         //debugPrintf("pin %d chan %d on\n", pin, channel);
-        pinMode(pin, OUTPUT_HIGH);
+        pinMode(ulPin, OUTPUT_HIGH);
 
     }
     else
     {
         if (channel < 0)
         {
-            channel = enable(pin, onTime, period - onTime);
+            channel = enable(ulPin, onTime, period - onTime);
             //debugPrintf("pin %d chan %d pwm\n", pin, channel);
         }
         else

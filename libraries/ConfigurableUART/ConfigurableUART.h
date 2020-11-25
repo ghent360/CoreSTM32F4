@@ -18,7 +18,7 @@ class ConfigurableUART : public Stream
 public:
     ConfigurableUART() NOEXCEPT;
 
-    bool Configure(Pin rx, Pin tx) NOEXCEPT;
+    bool Configure(PinName rx, PinName tx) NOEXCEPT;
     
     void begin(uint32_t baud) NOEXCEPT;
     void end() NOEXCEPT;

@@ -12,36 +12,36 @@ HybridPWMPin::HybridPWMPin() NOEXCEPT : pin(NoPin), value(-1.0f), freq(0), pwm(n
 
 }
 
-HybridPWMPin* HybridPWMPin::find(Pin pin) NOEXCEPT
+HybridPWMPin* HybridPWMPin::find(uint32_t ulPin) NOEXCEPT
 {
     for(uint32_t i = 0; i < MaxPWMChannels; i++)
-        if (PWMPins[i].pin == pin)
+        if (PWMPins[i].pin == ulPin)
             return &PWMPins[i];
     return nullptr;
 }
 
 
-HybridPWMPin* HybridPWMPin::allocate(Pin pin, float value) NOEXCEPT
+HybridPWMPin* HybridPWMPin::allocate(uint32_t ulPin, float value) NOEXCEPT
 {
     // find a free channel and allocate it
 
-    if (find(pin))
+    if (find(ulPin))
     {
-        debugPrintf("Pin is already allocated as pwm %x\n", static_cast<int>(pin));
+        debugPrintf("Pin is already allocated as pwm %lx\n", ulPin);
         return nullptr;
     }
     HybridPWMPin *ret = find(NoPin);
     if (ret == nullptr)
     {
-        debugPrintf("No PWM channels available for %x\n", static_cast<int>(pin));
+        debugPrintf("No PWM channels available for %lx\n", ulPin);
         return nullptr;
     }
-    ret->pin = pin;
+    ret->pin = ulPin;
     ret->value = value;
     ret->pwm = nullptr;
     ret->freq = 0;
     // set initial state
-    pinMode(pin, (value < 0.5) ? OUTPUT_LOW : OUTPUT_HIGH);
+    pinMode(ulPin, (value < 0.5) ? OUTPUT_LOW : OUTPUT_HIGH);
     // grab the hardware if we can
     //ret->pwm = HybridPWMBase::allocate(ret, pin, 0, value);
     return ret;
@@ -81,8 +81,9 @@ void HybridPWMPin::set(float value, uint32_t freq) NOEXCEPT
 
 void HybridPWMPin::appendStatus(const StringRef& reply) NOEXCEPT
 {
-    if (pin == NoPin) return;
-    reply.catf(" Pin %c.%d freq %d value %f", (pin >> 4) + 'A', static_cast<int>(pin) & 0xf, static_cast<int>(freq), (double)value);
+    if (pin == (uint32_t)NC) return;
+    reply.catf(" Pin %c.%d freq %d value %f", 
+        (uint8_t)((pin >> 4) + 'A'), (uint8_t)pin & 0xf, static_cast<int>(freq), (double)value);
     if (pwm) pwm->appendStatus(reply);
 }
 
@@ -91,11 +92,11 @@ HybridPWMBase::HybridPWMBase() NOEXCEPT : pwmPin(nullptr)
 }
 
 
-HybridPWMBase *HybridPWMBase::allocate(HybridPWMPin *p, Pin pin, uint32_t freq, float value) NOEXCEPT
+HybridPWMBase *HybridPWMBase::allocate(HybridPWMPin *p, uint32_t ulPin, uint32_t freq, float value) NOEXCEPT
 {
-    HybridPWMBase *ret = HardwarePWM::allocate(pin, freq, value);
+    HybridPWMBase *ret = HardwarePWM::allocate(ulPin, freq, value);
     if (!ret)
-        ret = SoftwarePWM::allocate(pin, freq, value);
+        ret = SoftwarePWM::allocate(ulPin, freq, value);
     if (ret)
         ret->pwmPin = p;
     return ret;

@@ -497,9 +497,9 @@ bool AnalogInCheckReady(uint32_t channels)
 }
 
 // Convert an Arduino Due analog pin number to the corresponding ADC channel number
-AnalogChannelNumber PinToAdcChannel(uint32_t pin)
+AnalogChannelNumber PinToAdcChannel(PinName pin)
 {
-    return GetAdcChannel(static_cast<PinName>(pin));
+    return GetAdcChannel(pin);
 }
 
 // Get the temperature measurement channel

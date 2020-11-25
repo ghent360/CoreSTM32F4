@@ -48,7 +48,7 @@ extern "C"{
 
 void yield(void);
 
-typedef uint8_t Pin;
+typedef PinName Pin;
 static const Pin NoPin = NC;
 typedef uint8_t DmaChannel;
 typedef uint16_t PwmFrequency;		// type used to represent a PWM frequency. 0 sometimes means "default".
