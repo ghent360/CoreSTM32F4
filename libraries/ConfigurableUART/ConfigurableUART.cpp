@@ -81,12 +81,12 @@ int8_t ConfigurableUART::GetUARTPortNumber() NOEXCEPT
     return -1;
 }
 
-bool ConfigurableUART::Configure(PinName rx, PinName tx) NOEXCEPT
+bool ConfigurableUART::Configure(uint32_t rx, uint32_t tx) NOEXCEPT
 {
     //Find the UART based on the confgured Pins
 
-    void* rxDev = pinmap_peripheral(rx, PinMap_UART_RX);
-    void* txDev = pinmap_peripheral(tx, PinMap_UART_TX);
+    void* rxDev = pinmap_peripheral(digitalPinToPinName(rx), PinMap_UART_RX);
+    void* txDev = pinmap_peripheral(digitalPinToPinName(tx), PinMap_UART_TX);
 
     if (rxDev != nullptr && (rxDev == txDev))
     {

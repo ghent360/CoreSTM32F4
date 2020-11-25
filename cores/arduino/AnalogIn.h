@@ -40,7 +40,7 @@ void AnalogInFinaliseConversion() NOEXCEPT;
 bool AnalogInCheckReady(uint32_t channels = 0xFFFFFFFF) NOEXCEPT;
 
 // Convert a pin number to an AnalogIn channel
-extern AnalogChannelNumber PinToAdcChannel(PinName pin) NOEXCEPT;
+extern AnalogChannelNumber PinToAdcChannel(uint32_t pin) NOEXCEPT;
 
 // Get the temperature measurement channel
 extern AnalogChannelNumber GetTemperatureAdcChannel() NOEXCEPT;
