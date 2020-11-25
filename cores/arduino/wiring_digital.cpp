@@ -57,11 +57,11 @@ void pinModeDuet(uint32_t ulPin, enum PinMode ulMode, uint32_t debounceCutoff) {
             break;
 #ifdef SUPPORT_HYPRID_PWM
         case OUTPUT_PWM_LOW:
-            HybridPWMPin::allocate(pin, 0.0f);
+            HybridPWMPin::allocate(ulPin, 0.0f);
             break;
             
         case OUTPUT_PWM_HIGH:
-            HybridPWMPin::allocate(pin, 1.0f);
+            HybridPWMPin::allocate(ulPin, 1.0f);
             break;
 #endif
         case AIN:

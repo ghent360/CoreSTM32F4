@@ -11,7 +11,7 @@ static constexpr uint32_t MinimumInterruptDeltaUS = 50;
 
 typedef struct {
     uint32_t nextEvent;
-    Pin pin;
+    PinName pinName;
     uint32_t onOffTimes[2][2];
     uint8_t state;
     uint8_t onOffBuffer;
@@ -97,17 +97,18 @@ static void disable(int chan)
 
 static int enable(Pin pin, uint32_t onTime, uint32_t offTime)
 {
+    PinName pinName = digitalPinToPinName(pin);
     // find a free slot
     for(uint32_t i = 0; i < MaxPWMChannels; i++)
         if (!States[i].enabled)
         {
             PWMState& s = States[i];
-            s.pin = pin;
+            s.pinName = pinName;
             s.onOffTimes[0][0] = onTime;
             s.onOffTimes[0][1] = offTime;
             s.onOffBuffer = 0;
             s.state = 0;
-            digitalWriteFast(pin, 1);
+            digitalWriteFast(pinName, 1);
             s.newTimes = false;
             s.enabled = true;
             syncAll();        
@@ -147,7 +148,7 @@ void SPWM_Handler()
                 // do we need to switch to a new set of timing parameters?
                 if (newState == 0)
                 {
-                    digitalWriteFast(s.pin, 1);
+                    digitalWriteFast(s.pinName, 1);
                     if (s.newTimes)
                     {
                         s.onOffBuffer ^= 1;
@@ -155,7 +156,7 @@ void SPWM_Handler()
                     }
                 }
                 else
-                    digitalWriteFast(s.pin, 0);
+                    digitalWriteFast(s.pinName, 0);
                 // adjust next time by any drift to keep things in sync
                 delta += s.onOffTimes[s.onOffBuffer][newState];
                 s.nextEvent = now + delta;

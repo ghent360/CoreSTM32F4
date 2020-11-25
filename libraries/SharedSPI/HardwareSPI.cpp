@@ -117,10 +117,11 @@ void transferComplete(HardwareSPI *spiDevice) NOEXCEPT
 void HardwareSPI::initPins(Pin clk, Pin miso, Pin mosi, Pin cs, DMA_Stream_TypeDef* rxStream, uint32_t rxChan, IRQn_Type rxIrq,
                             DMA_Stream_TypeDef* txStream, uint32_t txChan, IRQn_Type txIrq) NOEXCEPT
 {
-    spi.pin_sclk = clk;
-    spi.pin_miso = miso;
-    spi.pin_mosi = mosi;
-    spi.pin_ssel = csPin = cs;
+    spi.pin_sclk = digitalPinToPinName(clk);
+    spi.pin_miso = digitalPinToPinName(miso);
+    spi.pin_mosi = digitalPinToPinName(mosi);
+    csPin = cs;
+    spi.pin_ssel = digitalPinToPinName(cs);
     if (rxStream != nullptr)
     {   
         // init the DMA channels
@@ -169,7 +170,7 @@ void HardwareSPI::configureDevice(uint32_t deviceMode, uint32_t bits, uint32_t c
                 HAL_SPI_DMAStop(&(spi.handle));
             spi_deinit(&spi);
         }
-        spi.pin_ssel = cs;
+        spi.pin_ssel = digitalPinToPinName(cs);
         if (spi_init(&spi, deviceMode, bitRate, (spi_mode_e)clockMode, 1)) {
             initComplete = true;
             curBitRate = bitRate;

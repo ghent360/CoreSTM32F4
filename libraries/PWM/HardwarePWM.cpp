@@ -35,7 +35,7 @@ HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCE
 {
     //debugPrintf("HWPWM allocate pin %x, freq %d\n", static_cast<int>(pin), static_cast<int>(freq));
     // first find out if we have a timer for this pin
-    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(pin, PinMap_PWM);
+    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(digitalPinToPinName(pin), PinMap_PWM);
     if (instance == nullptr) return nullptr;
     uint32_t index = get_timer_index(instance);
     // now get the timer object
@@ -46,7 +46,7 @@ HybridPWMBase *HardwarePWM::allocate(Pin pin, uint32_t freq, float value) NOEXCE
         return nullptr;
     }
     // Get the channel we need
-    uint32_t chan = STM_PIN_CHANNEL(pinmap_function(pin, PinMap_PWM));
+    uint32_t chan = STM_PIN_CHANNEL(pinmap_function(digitalPinToPinName(pin), PinMap_PWM));
     // Now search to see if the timer is already in use
     int free = -1;
     for(uint32_t i = 0; i < MaxPWMChannels; i++)
@@ -86,7 +86,8 @@ void HardwarePWM::setValue(float value) NOEXCEPT
 
 void HardwarePWM::appendStatus(const StringRef& reply) NOEXCEPT
 {
-    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(pwmPin->pin, PinMap_PWM);
+    TIM_TypeDef *instance = (TIM_TypeDef *)pinmap_peripheral(
+        digitalPinToPinName(pwmPin->pin), PinMap_PWM);
     uint32_t index = get_timer_index(instance);
 
     reply.catf(" Tim %d chan %d", static_cast<int>(index+1), static_cast<int>(channel));
