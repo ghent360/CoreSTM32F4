@@ -23,7 +23,7 @@
 extern "C" {
 
 static WWDG_HandleTypeDef wdHandle;
-void watchdogEnable (uint32_t timeout)
+void WatchdogEnable (uint32_t timeout)
 {
     wdHandle.Instance = WWDG;
     wdHandle.Init.Prescaler = WWDG_PRESCALER_8;
@@ -37,12 +37,12 @@ void watchdogEnable (uint32_t timeout)
     NVIC_EnableIRQ(WWDG_IRQn);
 }
 
-void watchdogDisable(void)
+void WatchdogDisable(void)
 {
     __HAL_RCC_WWDG_CLK_DISABLE();
 }
 
-void watchdogReset(void)
+void WatchdogReset(void)
 {
     HAL_WWDG_Refresh(&wdHandle);
 }

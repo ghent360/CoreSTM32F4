@@ -31,19 +31,19 @@ extern "C" {
  *
  * \param timeout in milliseconds.
  */
-void watchdogEnable (uint32_t timeout);
+void WatchdogEnable (uint32_t timeout);
 
 /*
  * \brief Disable the watchdog timer. Should only be called once.
  *
  */
-void watchdogDisable (void);
+void WatchdogDisable (void);
 
 /*
  * \brief Reset the watchdog counter.
  *
  */
-void watchdogReset (void);
+void WatchdogReset (void);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -7,8 +7,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "spi_com.h"
-extern "C" void DMA2_Stream2_IRQHandler(void) NOEXCEPT;
-extern "C" void DMA2_Stream3_IRQHandler(void) NOEXCEPT;
+//extern "C" void DMA2_Stream2_IRQHandler(void) NOEXCEPT;
+//extern "C" void DMA2_Stream3_IRQHandler(void) NOEXCEPT;
 extern "C" void DMA1_Stream3_IRQHandler(void) NOEXCEPT;
 extern "C" void DMA1_Stream4_IRQHandler(void) NOEXCEPT;
 
@@ -48,11 +48,12 @@ private:
     void initDmaStream(DMA_HandleTypeDef& hdma, DMA_Stream_TypeDef *inst, uint32_t chan, IRQn_Type irq, uint32_t dir, uint32_t minc) NOEXCEPT;
     void startTransferAndWait(const uint8_t *tx_data, uint8_t *rx_data, size_t len) NOEXCEPT;
 
-    friend void DMA2_Stream2_IRQHandler() NOEXCEPT;
-    friend void DMA2_Stream3_IRQHandler() NOEXCEPT;
+    //friend void DMA2_Stream2_IRQHandler() NOEXCEPT;
+    //friend void DMA2_Stream3_IRQHandler() NOEXCEPT;
     friend void DMA1_Stream3_IRQHandler() NOEXCEPT;
     friend void DMA1_Stream4_IRQHandler() NOEXCEPT;
     friend void transferComplete(HardwareSPI *spiDevice) NOEXCEPT;
+
     friend void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
     friend void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi);
 };
