@@ -100,6 +100,7 @@ uint8_t HardwareSDIO::Init(void) noexcept
   __HAL_LINKDMA(&hsd, hdmatx, dmaTx);
   waitingTask = 0;
   sd_state = HAL_SD_Init(&hsd);
+#ifdef ENABLE_SDIO_WIDE
   /* Configure SD Bus width (4 bits mode selected) */
   if (sd_state == MSD_OK) {
     /* Enable wide operation */
@@ -107,7 +108,7 @@ uint8_t HardwareSDIO::Init(void) noexcept
       sd_state = MSD_ERROR;
     }
   }
-
+#endif
   return sd_state;
 }
 
