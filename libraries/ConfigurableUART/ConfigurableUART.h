@@ -17,6 +17,15 @@ class ConfigurableUART : public Stream
 
 public:
 	typedef void (*InterruptCallbackFn)(ConfigurableUART*) NOEXCEPT;
+	union Errors
+	{
+		uint32_t all;
+		uint32_t uartOverrun : 11,
+				 framing : 11,
+				 bufferOverrun : 10;
+
+		Errors() noexcept { all = 0; }
+	};
 
     ConfigurableUART() NOEXCEPT;
 
@@ -45,9 +54,14 @@ public:
     uint32_t getInterruptPriority() NOEXCEPT;
 
     InterruptCallbackFn SetInterruptCallback(InterruptCallbackFn f) noexcept;
+
+	// Get and clear the errors
+	Errors GetAndClearErrors() noexcept;
+
 private:
     HardwareSerial *serialPort;
     InterruptCallbackFn interruptCallback;
+    Errors errors;
 };
 
 #define UARTClass ConfigurableUART // compatibility with RRF
