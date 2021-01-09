@@ -37,7 +37,8 @@ CORE_SRC_DIRS += \
     libraries/SPI/src/utility \
 	libraries/SharedSPI \
 	libraries/PWM \
-	libraries/SDIO
+	libraries/SDIO \
+	libraries/CRC32
 
 #Core libraries
 CORE_SRC_DIRS += \
