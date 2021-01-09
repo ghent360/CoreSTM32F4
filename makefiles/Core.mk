@@ -34,7 +34,8 @@ CORE_SRC_DIRS += \
 	libraries/ConfigurableUART \
 	libraries/SharedSPI \
 	libraries/PWM \
-	libraries/SDIO
+	libraries/SDIO \
+	libraries/CRC32
 
 #Core libraries
 CORE_SRC_DIRS += \
