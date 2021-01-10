@@ -258,8 +258,8 @@ $(BUILD_DIR)/$(OUTPUT_NAME).elf: $(BUILD_DIR)/libSTMCore.a $(BUILD_DIR)/libRRFLi
 		-Wl,--warn-common \
 		-Wl,--warn-unresolved-symbols \
 		-Wl,--defsym=LD_MAX_SIZE=524288 \
-		-Wl,--defsym=LD_MAX_DATA_SIZE=196608 \
-		-Wl,--defsym=LD_FLASH_OFFSET=0x0 \
+		-Wl,--defsym=LD_MAX_DATA_SIZE=131072 \
+		-Wl,--defsym=LD_FLASH_OFFSET=0x8000 \
 		-Wl,--start-group \
 			$(BUILD_DIR)/$(CORE_DIR)/cores/arduino/syscalls.o \
 			$(RRFLIBC_OBJS) \
