@@ -106,9 +106,8 @@ FLAGS += \
 	-DUSBD_PID=0 \
 	-DTIM_IRQ_PRIO=13 \
 	-DUSB_PRODUCT=\"STM32F407VE\" \
-	-DBOARD_NAME=\"PRNTR_Vx\"
-
-#	-DVECT_TAB_OFFSET=0x8000
+	-DBOARD_NAME=\"PRNTR_Vx\" \
+	-DVECT_TAB_OFFSET=0x8000
 
 FLAGS += \
 	-DDEVICE_USBDEVICE=1 \
@@ -336,6 +335,6 @@ distclean:
 	-rm -rf $(BUILD_DIR)/ 
 
 upload:
-	STM32_Programmer_CLI -c port=SWD -w "$(BUILD_DIR)/firmware.bin" 0x8000000 -v -Rst -Run
+	STM32_Programmer_CLI -c port=SWD -w "$(BUILD_DIR)/firmware.bin" 0x8008000 -v -Rst -Run
 
 .PHONY: all firmware clean distclean $(BUILD_DIR)/$(OUTPUT_NAME).elf
