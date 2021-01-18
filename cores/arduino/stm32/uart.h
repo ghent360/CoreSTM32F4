@@ -40,13 +40,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_def.h"
 #include "PinNames.h"
-#if !defined(SERIAL_TX_BUFFER_SIZE)
-#define SERIAL_TX_BUFFER_SIZE 128
-#endif
-#if !defined(SERIAL_RX_BUFFER_SIZE)
-#define SERIAL_RX_BUFFER_SIZE 128
-#endif
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -74,6 +67,8 @@ struct serial_s {
    */
   USART_TypeDef *uart;
   UART_HandleTypeDef handle;
+  void (*rx_callback)(serial_t *);
+  int (*tx_callback)(serial_t *);
   PinName pin_tx;
   PinName pin_rx;
   IRQn_Type irq;
@@ -81,13 +76,10 @@ struct serial_s {
   uint8_t recv;
   uint8_t *rx_buff;
   uint8_t *tx_buff;
-  volatile uint32_t rx_tail;
-  volatile uint32_t tx_head;
-  volatile uint32_t rx_head;
-  volatile uint32_t tx_tail;
-
-  uint32_t rx_full;
-  uint32_t hw_error;
+  uint16_t rx_tail;
+  uint16_t tx_head;
+  volatile uint16_t rx_head;
+  volatile uint16_t tx_tail;
 };
 
 /* Exported constants --------------------------------------------------------*/
@@ -192,8 +184,9 @@ void uart_deinit(serial_t *obj);
 void uart_config_lowpower(serial_t *obj);
 #endif
 size_t uart_write(serial_t *obj, uint8_t data, uint16_t size);
-void uart_start_rx(serial_t *obj);
-void uart_start_tx(serial_t *obj);
+int uart_getc(serial_t *obj, unsigned char *c);
+void uart_attach_rx_callback(serial_t *obj, void (*callback)(serial_t *));
+void uart_attach_tx_callback(serial_t *obj, int (*callback)(serial_t *));
 void uart_set_interrupt_priority(serial_t *obj, uint32_t priority);
 
 uint8_t serial_tx_active(serial_t *obj);

@@ -221,15 +221,6 @@ int ConfigurableUART::availableForWrite(void) NOEXCEPT
     return 0;
 }
 
-size_t ConfigurableUART::canWrite() NOEXCEPT
-{
-    if(serialPort != nullptr)
-    {
-        return serialPort->canWrite();
-    }
-    return 0;
-}
-
 size_t ConfigurableUART::write(const uint8_t ch) NOEXCEPT
 {
     if(serialPort != nullptr)
@@ -301,8 +292,7 @@ ConfigurableUART::Errors ConfigurableUART::GetAndClearErrors() NOEXCEPT
 	Errors errs;
     flush();
     errs.uartOverrun = 0;
-    errs.bufferOverrun = serialPort->_serial.rx_full;
-    errs.framing = serialPort->_serial.hw_error;
-    serialPort->_serial.hw_error = serialPort->_serial.rx_full = 0;
+//    errs.bufferOverrun = serialPort->_serial.rx_full;
+//    errs.framing = serialPort->_serial.hw_error;
 	return errs;
 }

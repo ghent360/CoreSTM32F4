@@ -43,7 +43,6 @@ public:
     int read(void) NOEXCEPT;
     void flush(void) NOEXCEPT;
     using Print::write;
-    size_t canWrite() NOEXCEPT;
 
     bool IsConnected() NOEXCEPT;
 
