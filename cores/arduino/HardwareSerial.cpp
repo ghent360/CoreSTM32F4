@@ -106,21 +106,21 @@ void serialEventLP1() __attribute__((weak));
 #endif // HAVE_HWSERIALx
 
 // Constructors ////////////////////////////////////////////////////////////////
-HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx)
+HardwareSerial::HardwareSerial(uint32_t _rx, uint32_t _tx) noexcept
 {
   _serial.pin_rx = digitalPinToPinName(_rx);
   _serial.pin_tx = digitalPinToPinName(_tx);
   init();
 }
 
-HardwareSerial::HardwareSerial(PinName _rx, PinName _tx)
+HardwareSerial::HardwareSerial(PinName _rx, PinName _tx) noexcept
 {
   _serial.pin_rx = _rx;
   _serial.pin_tx = _tx;
   init();
 }
 
-HardwareSerial::HardwareSerial(void *peripheral)
+HardwareSerial::HardwareSerial(void *peripheral) noexcept
 {
   // If Serial is defined in variant set
   // the Rx/Tx pins for com port if defined
@@ -228,7 +228,7 @@ HardwareSerial::HardwareSerial(void *peripheral)
   init();
 }
 
-void HardwareSerial::init(void)
+void HardwareSerial::init(void) noexcept
 {
   _serial.rx_buff = _rx_buffer;
   _serial.rx_head = 0;
@@ -238,7 +238,7 @@ void HardwareSerial::init(void)
   _serial.tx_tail = 0;
 }
 
-void HardwareSerial::configForLowPower(void)
+void HardwareSerial::configForLowPower(void) noexcept
 {
 #if defined(HAL_PWR_MODULE_ENABLED) && defined(UART_IT_WUF)
   // Reconfigure properly Serial instance to use HSI as clock source
@@ -248,46 +248,10 @@ void HardwareSerial::configForLowPower(void)
 #endif
 }
 
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-void HardwareSerial::_rx_complete_irq(serial_t *obj)
-{
-  // No Parity error, read byte and store it in the buffer if there is room
-  unsigned char c;
-
-  if (uart_getc(obj, &c) == 0) {
-
-    rx_buffer_index_t i = (unsigned int)(obj->rx_head + 1) % SERIAL_RX_BUFFER_SIZE;
-
-    // if we should be storing the received character into the location
-    // just before the tail (meaning that the head would advance to the
-    // current location of the tail), we're about to overflow the buffer
-    // and so we don't write the character or advance the head.
-    if (i != obj->rx_tail) {
-      obj->rx_buff[obj->rx_head] = c;
-      obj->rx_head = i;
-    }
-  }
-}
-
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-int HardwareSerial::_tx_complete_irq(serial_t *obj)
-{
-  // If interrupts are enabled, there must be more data in the output
-  // buffer. Send the next byte
-  obj->tx_tail = (obj->tx_tail + 1) % SERIAL_TX_BUFFER_SIZE;
-
-  if (obj->tx_head == obj->tx_tail) {
-    return -1;
-  }
-
-  return 0;
-}
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud, uint8_t config)
+void HardwareSerial::begin(unsigned long baud, uint8_t config) noexcept
 {
   uint32_t databits = 0;
   uint32_t stopbits = 0;
@@ -347,10 +311,10 @@ void HardwareSerial::begin(unsigned long baud, uint8_t config)
   }
 
   uart_init(&_serial, (uint32_t)baud, databits, parity, stopbits);
-  uart_attach_rx_callback(&_serial, _rx_complete_irq);
+  uart_start_rx(&_serial);
 }
 
-void HardwareSerial::end()
+void HardwareSerial::end() noexcept
 {
   // wait for transmission of outgoing data
   flush();
@@ -358,15 +322,16 @@ void HardwareSerial::end()
   uart_deinit(&_serial);
 
   // clear any received data
-  _serial.rx_head = _serial.rx_tail;
+  _serial.rx_head = _serial.rx_tail = 0;
+
 }
 
-int HardwareSerial::available(void)
+int HardwareSerial::available(void) noexcept
 {
   return ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _serial.rx_head - _serial.rx_tail)) % SERIAL_RX_BUFFER_SIZE;
 }
 
-int HardwareSerial::peek(void)
+int HardwareSerial::peek(void) noexcept
 {
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
@@ -375,22 +340,22 @@ int HardwareSerial::peek(void)
   }
 }
 
-int HardwareSerial::read(void)
+int HardwareSerial::read(void) noexcept
 {
   // if the head isn't ahead of the tail, we don't have any characters
   if (_serial.rx_head == _serial.rx_tail) {
     return -1;
   } else {
     unsigned char c = _serial.rx_buff[_serial.rx_tail];
-    _serial.rx_tail = (rx_buffer_index_t)(_serial.rx_tail + 1) % SERIAL_RX_BUFFER_SIZE;
+    _serial.rx_tail = (_serial.rx_tail + 1) % SERIAL_RX_BUFFER_SIZE;
     return c;
   }
 }
 
-int HardwareSerial::availableForWrite(void)
+int HardwareSerial::availableForWrite(void) noexcept
 {
-  tx_buffer_index_t head = _serial.tx_head;
-  tx_buffer_index_t tail = _serial.tx_tail;
+  uint32_t head = _serial.tx_head;
+  uint32_t tail = _serial.tx_tail;
 
   if (head >= tail) {
     return SERIAL_TX_BUFFER_SIZE - 1 - head + tail;
@@ -398,28 +363,20 @@ int HardwareSerial::availableForWrite(void)
   return tail - head - 1;
 }
 
-void HardwareSerial::flush()
+void HardwareSerial::flush() noexcept
 {
-  // If we have never written a byte, no need to flush. This special
-  // case is needed since there is no way to force the TXC (transmit
-  // complete) bit to 1 during initialization
-  if (!_written) {
-    return;
-  }
-
+  // wait for the buffer to empty
   while ((_serial.tx_head != _serial.tx_tail)) {
     // nop, the interrupt handler will free up space for us
   }
-  // If we get here, nothing is queued anymore (DRIE is disabled) and
-  // the hardware finished tranmission (TXC is set).
+  // and for the hardware to complete sending
+  while (serial_tx_active(&_serial)) {
+  }
 }
 
-size_t HardwareSerial::write(uint8_t c)
+size_t HardwareSerial::write(uint8_t c) noexcept
 {
-  _written = true;
-
-  tx_buffer_index_t i = (_serial.tx_head + 1) % SERIAL_TX_BUFFER_SIZE;
-
+  uint32_t i = (_serial.tx_head + 1) % SERIAL_TX_BUFFER_SIZE;
   // If the output buffer is full, there's nothing for it other than to
   // wait for the interrupt handler to empty it a bit
   while (i == _serial.tx_tail) {
@@ -430,28 +387,75 @@ size_t HardwareSerial::write(uint8_t c)
   _serial.tx_head = i;
 
   if (!serial_tx_active(&_serial)) {
-    uart_attach_tx_callback(&_serial, _tx_complete_irq);
+    uart_start_tx(&_serial);
   }
 
   return 1;
 }
 
-void HardwareSerial::setRx(uint32_t _rx)
+size_t HardwareSerial::writeBlock(const uint8_t *buffer, size_t size) noexcept
+{
+  uint32_t head = _serial.tx_head;
+  uint32_t tail = _serial.tx_tail;
+  size_t toCopy = (SERIAL_TX_BUFFER_SIZE - 1 - head + tail) % SERIAL_TX_BUFFER_SIZE;
+
+  if (toCopy > size) toCopy = size;
+  if (toCopy > 0)
+  {
+    size_t toCopyNext;
+    if (head >= tail)
+    {
+      size_t toCopyFirst = SERIAL_TX_BUFFER_SIZE - head;
+      if (toCopy < toCopyFirst)
+      {
+        memcpy(&(_serial.tx_buff[head]), buffer, toCopy);
+        _serial.tx_head = head + toCopy;
+        return toCopy;
+      }
+      memcpy(&(_serial.tx_buff[head]), buffer, toCopyFirst);
+      head = 0;
+      toCopyNext = toCopy - toCopyFirst;
+      buffer += toCopyFirst;
+    }
+    else
+			toCopyNext = toCopy;
+		memcpy(&(_serial.tx_buff[head]), buffer, toCopyNext);
+		_serial.tx_head = head + toCopyNext;
+  }
+  return toCopy;
+}
+
+size_t HardwareSerial::write(const uint8_t *buffer, size_t size) noexcept
+{
+  size_t ret = size;
+  while (size > 0)
+  {
+    size_t len = writeBlock(buffer, size);
+    size -= len;
+    buffer += len;
+    if (len && !serial_tx_active(&_serial))
+      uart_start_tx(&_serial);    
+  }
+  return ret;
+}
+
+
+void HardwareSerial::setRx(uint32_t _rx) noexcept
 {
   _serial.pin_rx = digitalPinToPinName(_rx);
 }
 
-void HardwareSerial::setTx(uint32_t _tx)
+void HardwareSerial::setTx(uint32_t _tx) noexcept
 {
   _serial.pin_tx = digitalPinToPinName(_tx);
 }
 
-void HardwareSerial::setRx(PinName _rx)
+void HardwareSerial::setRx(PinName _rx) noexcept
 {
   _serial.pin_rx = _rx;
 }
 
-void HardwareSerial::setTx(PinName _tx)
+void HardwareSerial::setTx(PinName _tx) noexcept
 {
   _serial.pin_tx = _tx;
 }
