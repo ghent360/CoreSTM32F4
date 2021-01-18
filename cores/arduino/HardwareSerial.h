@@ -120,12 +120,11 @@ class HardwareSerial : public Stream {
       begin(baud, SERIAL_8N1);
     }
     void begin(unsigned long, uint8_t) NOEXCEPT;
-    void end();
+    void end() NOEXCEPT;
     virtual int available(void) NOEXCEPT;
     virtual int peek(void) NOEXCEPT;
     virtual int read(void) NOEXCEPT;
     int availableForWrite(void) NOEXCEPT;
-    size_t canWrite() NOEXCEPT;
     virtual void flush(void) NOEXCEPT;
     virtual size_t write(uint8_t) NOEXCEPT;
     inline size_t write(unsigned long n) NOEXCEPT
@@ -168,6 +167,7 @@ class HardwareSerial : public Stream {
     // Interrupt handlers
     static void _rx_complete_irq(serial_t *obj) NOEXCEPT;
     static int _tx_complete_irq(serial_t *obj) NOEXCEPT;
+    friend class ConfigurableUART;
   private:
     bool _rx_enabled;
     uint8_t _config;
@@ -176,16 +176,38 @@ class HardwareSerial : public Stream {
     void configForLowPower(void) NOEXCEPT;
 };
 
+#if defined(USART1)
 extern HardwareSerial Serial1;
+#endif
+#if defined(USART2)
 extern HardwareSerial Serial2;
+#endif
+#if defined(USART3)
 extern HardwareSerial Serial3;
+#endif
+#if defined(UART4) || defined(USART4)
 extern HardwareSerial Serial4;
+#endif
+#if defined(UART5) || defined(USART5)
 extern HardwareSerial Serial5;
+#endif
+#if defined(USART6)
 extern HardwareSerial Serial6;
+#endif
+#if defined(UART7) || defined(USART7)
 extern HardwareSerial Serial7;
+#endif
+#if defined(UART8) || defined(USART8)
 extern HardwareSerial Serial8;
+#endif
+#if defined(UART9)
 extern HardwareSerial Serial9;
+#endif
+#if defined(UART10) || defined(USART10)
 extern HardwareSerial Serial10;
+#endif
+#if defined(LPUART1)
 extern HardwareSerial SerialLP1;
+#endif
 
 #endif

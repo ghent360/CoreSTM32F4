@@ -126,7 +126,6 @@ static uint8_t get_pin_id(uint16_t pin)
 
   return id;
 }
-
 void stm32_interrupt_enable(GPIO_TypeDef *port, uint16_t pin, StandardCallbackFunction callback, uint32_t mode, CallbackParameter param)
 {
   GPIO_InitTypeDef GPIO_InitStruct;

@@ -90,7 +90,7 @@ class SoftwareSerial : public Stream {
     // public methods
 
     SoftwareSerial(uint16_t receivePin, uint16_t transmitPin, bool inverse_logic = false) NOEXCEPT;
-    virtual ~SoftwareSerial();
+    virtual ~SoftwareSerial() NOEXCEPT;
     void begin(long speed) NOEXCEPT;
     bool listen() NOEXCEPT;
     void end() NOEXCEPT;

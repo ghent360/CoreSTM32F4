@@ -19,12 +19,15 @@ public:
 
 private:
     
-    uint8_t transfer_byte(uint8_t byte_out) NOEXCEPT;
+    uint8_t mode01TransferByte(uint8_t byte_out) NOEXCEPT;
+    uint8_t mode23TransferByte(uint8_t byte_out) NOEXCEPT;
     
     bool needInit;
     Pin sck;
     Pin mosi;
     Pin miso;
+    uint32_t mode;
+    uint32_t delay;
 };
 
 

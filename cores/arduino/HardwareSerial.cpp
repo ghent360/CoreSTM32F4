@@ -95,7 +95,11 @@
   #endif
 
   #if defined(HAVE_HWSERIAL10)
+    #if defined(USART10)
+      HardwareSerial Serial10(USART10);
+    #else
     HardwareSerial Serial10(UART10);
+    #endif
     void serialEvent10() __attribute__((weak));
   #endif
 
@@ -218,7 +222,7 @@ HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) NO
                     setTx(PIN_SERIAL8_TX);
                   } else
 #endif
-#if defined(PIN_SERIAL9_TX) && defined(UART9)
+#if defined(PIN_SERIAL9_TX) && defined(UART9_BASE)
                     if (peripheral == UART9) {
 #if defined(PIN_SERIAL9_RX)
                       setRx(PIN_SERIAL9_RX);
@@ -226,8 +230,14 @@ HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex) NO
                       setTx(PIN_SERIAL9_TX);
                     } else
 #endif
-#if defined(PIN_SERIAL10_TX) && defined(UART10)
-                      if (peripheral == UART10) {
+#if defined(PIN_SERIAL10_TX) &&\
+   (defined(USART10_BASE) || defined(UART10_BASE))
+#if defined(USART10_BASE)
+                      if (peripheral == USART10)
+#elif defined(UART10_BASE)
+                      if (peripheral == UART10)
+#endif
+                      {
 #if defined(PIN_SERIAL10_RX)
                         setRx(PIN_SERIAL10_RX);
 #endif
@@ -431,17 +441,6 @@ int HardwareSerial::read(void) NOEXCEPT
 }
 
 int HardwareSerial::availableForWrite(void) NOEXCEPT
-{
-  tx_buffer_index_t head = _serial.tx_head;
-  tx_buffer_index_t tail = _serial.tx_tail;
-
-  if (head >= tail) {
-    return SERIAL_TX_BUFFER_SIZE - 1 - head + tail;
-  }
-  return tail - head - 1;
-}
-
-size_t HardwareSerial::canWrite() NOEXCEPT
 {
   tx_buffer_index_t head = _serial.tx_head;
   tx_buffer_index_t tail = _serial.tx_tail;

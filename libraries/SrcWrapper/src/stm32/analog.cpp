@@ -44,6 +44,7 @@
 extern "C" {
 #endif
 
+
 /* Private_Variables */
 #if (defined(HAL_ADC_MODULE_ENABLED) && !defined(HAL_ADC_MODULE_ONLY)) ||\
     (defined(HAL_DAC_MODULE_ENABLED) && !defined(HAL_DAC_MODULE_ONLY))

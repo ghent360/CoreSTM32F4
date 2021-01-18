@@ -1,6 +1,7 @@
 //author: sdavi
 
 #include "ConfigurableUART.h"
+extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
 
 ConfigurableUART UART_Slot0;
@@ -287,7 +288,7 @@ bool ConfigurableUART::IsConnected() NOEXCEPT
 
 
 // FIXME we should probbaly implement the call back for this!
-ConfigurableUART::InterruptCallbackFn ConfigurableUART::SetInterruptCallback(InterruptCallbackFn f) noexcept
+ConfigurableUART::InterruptCallbackFn ConfigurableUART::SetInterruptCallback(InterruptCallbackFn f) NOEXCEPT
 {
 	InterruptCallbackFn ret = interruptCallback;
 	interruptCallback = f;
@@ -295,9 +296,13 @@ ConfigurableUART::InterruptCallbackFn ConfigurableUART::SetInterruptCallback(Int
 }
 
 // Get and clear the errors
-ConfigurableUART::Errors ConfigurableUART::GetAndClearErrors() noexcept
+ConfigurableUART::Errors ConfigurableUART::GetAndClearErrors() NOEXCEPT
 {
 	Errors errs;
-	std::swap(errs, errors);
+    flush();
+    errs.uartOverrun = 0;
+    errs.bufferOverrun = serialPort->_serial.rx_full;
+    errs.framing = serialPort->_serial.hw_error;
+    serialPort->_serial.hw_error = serialPort->_serial.rx_full = 0;
 	return errs;
 }
