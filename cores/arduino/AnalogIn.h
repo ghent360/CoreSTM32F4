@@ -46,6 +46,7 @@ extern AnalogChannelNumber PinToAdcChannel(uint32_t pin) NOEXCEPT;
 
 // Get the temperature measurement channel
 extern AnalogChannelNumber GetTemperatureAdcChannel() NOEXCEPT;
+extern AnalogChannelNumber GetVREFAdcChannel() NOEXCEPT;
 
 #endif
 

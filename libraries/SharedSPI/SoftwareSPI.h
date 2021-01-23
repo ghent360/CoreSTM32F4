@@ -16,6 +16,8 @@ public:
     bool waitForTxEmpty() NOEXCEPT;
     
     static SoftwareSPI SWSSP0;
+    static SoftwareSPI SWSSP1;
+    static SoftwareSPI SWSSP2;
 
 private:
     
