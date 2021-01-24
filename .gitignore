@@ -1,12 +1,37 @@
-/Duet2_RTOS/
-/Duet3_V05/
-/Duet3_V06/
-/Duet3_V06_CAN0/
-/Duet3_V06_Debug/
-/DuetM_RTOS/
-/PCCB_08/
-/PCCB_08_X5/
-/PCCB_10/
-/RADDS_RTOS/
-/SAME70XPLD/
-/.settings/language.settings.xml
+# Specific
+astyle.out
+boards.local.txt
+platform.local.txt
+path_config.json
+update_config.json
+
+# Backup
+*.bak
+*.gho
+*.ori
+*.swp
+*.tmp
+
+# macOS
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Patch
+*.orig
+*.rej
+
+# Python
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VisualStudioCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace

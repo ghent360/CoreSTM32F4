@@ -98,7 +98,7 @@
     #if defined(USART10)
       HardwareSerial Serial10(USART10);
     #else
-    HardwareSerial Serial10(UART10);
+      HardwareSerial Serial10(UART10);
     #endif
     void serialEvent10() __attribute__((weak));
   #endif

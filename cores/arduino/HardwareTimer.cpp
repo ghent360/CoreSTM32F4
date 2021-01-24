@@ -634,8 +634,8 @@ void HardwareTimer::setMode(uint32_t channel, TimerModes_t mode, PinName pin)
        */
       if (_ChannelMode[channel - 1] != TIMER_DISABLED) {
         _ChannelMode[channel - 1] = TIMER_DISABLED;
-      channelOC.OCMode = TIM_OCMODE_TIMING;
-      HAL_TIM_OC_ConfigChannel(&(_timerObj.handle), &channelOC, timChannel);
+        channelOC.OCMode = TIM_OCMODE_TIMING;
+        HAL_TIM_OC_ConfigChannel(&(_timerObj.handle), &channelOC, timChannel);
       }
       return;
     case TIMER_OUTPUT_COMPARE_ACTIVE:

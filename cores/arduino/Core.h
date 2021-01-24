@@ -188,6 +188,9 @@ inline void memcpyf(float *dst, const float *src, size_t numFloats) noexcept
 // Address of main RAM bank
 #define IRAM_ADDR 0x20000000
 
+// Space reserved for Handler stack in bytes
+#define SystemStackSize (1024)
+
 #include "wiring.h"
 #include "wiring_digital.h"
 #include "watchdog.h"
