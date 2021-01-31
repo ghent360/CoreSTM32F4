@@ -1,6 +1,12 @@
 #ifndef __HARDWARESDIO_H
 #define __HARDWARESDIO_H
+#if defined(STM32F4xx)
 #include "stm32f4xx_hal.h"
+#elif defined STM32F7xx
+#include "stm32f7xx_hal.h"
+#else
+#error "Architecture is not supported"
+#endif
 #include "Core.h"
 #include "FreeRTOS.h"
 #include "task.h"

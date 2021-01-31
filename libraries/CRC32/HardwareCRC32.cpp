@@ -9,8 +9,15 @@
 
 
 #include "HardwareCRC32.h"
-#include "stm32f4xx_hal_crc.h"
+
+#if defined(STM32F4xx)
 #include "stm32f4xx_hal_rcc_ex.h"
+#elif defined STM32F7xx
+#include "stm32f7xx_hal_rcc_ex.h"
+#else
+#error "Architecture is not supported"
+#endif
+
 
 // Original code
 #if 0
@@ -82,7 +89,7 @@ HardwareCRC32 HWCRC32(CRC);
 HardwareCRC32::HardwareCRC32(CRC_TypeDef *Instance) noexcept : inst(Instance)
 {
     // make sure the hardware has power
-    __HAL_RCC_CRC_CLK_ENABLE();
+    //__HAL_RCC_CRC_CLK_ENABLE();
 }
 
 uint32_t inline HardwareCRC32::Calc(const uint8_t val, const uint32_t crc) noexcept

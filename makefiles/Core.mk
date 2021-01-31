@@ -13,21 +13,19 @@ CORE_SRC_DIRS  = \
 
 CORE_SRC_DIRS += \
 	system \
-	system/STM32F4xx \
 	system/Middlewares/ST/STM32_USB_Device_Library/Core/Inc \
 	system/Middlewares/ST/STM32_USB_Device_Library/Core/Src
 
 CORE_SRC_DIRS += \
+	system/STM32F4xx \
 	system/Drivers/CMSIS/Device/ST/STM32F4xx/Include \
-	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source
-
-CORE_SRC_DIRS += \
-	system/Drivers/STM32F4xx_HAL_Driver/Inc\
+	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc \
+	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source \
+	system/Drivers/STM32F4xx_HAL_Driver/Inc \
 	system/Drivers/STM32F4xx_HAL_Driver/Src
 
 CORE_SRC_DIRS += \
 	CMSIS/CMSIS/Core/Include \
-	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc
 
 CORE_SRC_DIRS += \
 	variants/$(VARIANT) \

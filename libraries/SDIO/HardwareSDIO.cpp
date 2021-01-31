@@ -79,12 +79,23 @@ uint8_t HardwareSDIO::Init(void) noexcept
   }
   __HAL_RCC_SDIO_CLK_ENABLE();
   /* HAL SD initialization */
+#ifdef STM32F4  
   hsd.Instance = SDIO;
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
   hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
   hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+#elif defined(STM32F7)
+  hsd.Instance = SDMMC1;
+  hsd.Init.ClockEdge = SDMMC_CLOCK_EDGE_RISING;
+  hsd.Init.ClockBypass = SDMMC_CLOCK_BYPASS_DISABLE;
+  hsd.Init.ClockPowerSave = SDMMC_CLOCK_POWER_SAVE_DISABLE;
+  hsd.Init.BusWide = SDMMC_BUS_WIDE_1B;
+  hsd.Init.HardwareFlowControl = SDMMC_HARDWARE_FLOW_CONTROL_DISABLE;
+#else
+#error "Architecture is not supported"
+#endif  
   hsd.Init.ClockDiv = 0;
   pinmap_pinout(PC_8, PinMap_SD);
   pinmap_pinout(PC_9, PinMap_SD);

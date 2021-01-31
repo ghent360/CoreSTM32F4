@@ -58,6 +58,8 @@ $(info  - Linker Script used: $(LINKER_SCRIPT))
 
 ifeq ($(VARIANT), PRNTR_Vx)
 	VARIANT_DEFINES = -DARDUINO_PRNTR_V2
+else ifeq ($(VARIANT), NUCLEO_F767ZI)
+	VARIANT_DEFINES = -DARDUINO_NUCLEO_F767ZI
 else
 	VARIANT_DEFINES = -DARDUINO_BIGTREE_SKR_PRO
 endif
@@ -72,15 +74,20 @@ endif
 #	-DSTM32F40_41xxx \
 #	-DSTM32F407_5ZX \
 #	-DSTM32F4xx
+#
+#
+#	-DSTM32F7 \
+#	-DSTM32F767xx \
+#	-DSTM32F7xx \
 
 FLAGS  = \
 	-D__$(PROCESSOR)__ \
 	-D_XOPEN_SOURCE \
 	-DSTM32F4 \
 	-DSTM32F407xx \
+	-DSTM32F4xx \
 	-DSTM32F40_41xxx \
 	-DSTM32F407_5ZX \
-	-DSTM32F4xx \
 	-DNOEXCEPT=noexcept
 
 # UART configuration
@@ -94,8 +101,6 @@ FLAGS  += \
 #	-DHAVE_HWSERIAL3 \
 #	-DHAVE_HWSERIAL6
 
-#lpcopen Defines
-FLAGS += -DCORE_M4
 #RTOS + enable mods to RTOS+TCP for RRF
 FLAGS += \
 	-DRTOS \
@@ -111,7 +116,6 @@ FLAGS += \
 
 FLAGS += \
 	-DDEVICE_USBDEVICE=1 \
-	-DTARGET_STM32F4 \
 	-DHSE_VALUE=8000000 \
 	-DHSI_VALUE=16000000 \
 	-DARDUINO_ARCH_STM32 \
@@ -133,7 +137,8 @@ FLAGS += \
 	-mcpu=cortex-m4 \
 	-mthumb \
 	-ffunction-sections \
-	-fdata-sections
+	-fdata-sections \
+	-nostdlib
 
 FLAGS += \
 	-nostdlib \
@@ -178,6 +183,7 @@ CXXFLAGS = \
 	-fno-threadsafe-statics \
 	-fexceptions \
 	-fno-rtti \
+	-fno-use-cxa-atexit	\
 	-Wno-register
 
 CXXFLAGS_RRFL = \
@@ -186,6 +192,7 @@ CXXFLAGS_RRFL = \
 	-fno-threadsafe-statics \
 	-fno-exceptions \
 	-fno-rtti \
+    -fno-use-cxa-atexit	\
 	-Wno-register
 
 CXXFLAGS_CORE = \

@@ -1,6 +1,14 @@
 #ifndef HARDWARECRC32_H
 #define HARDWARECRC32_H
+
+#if defined(STM32F4xx)
 #include "stm32f4xx_hal_crc.h"
+#elif defined STM32F7xx
+#include "stm32f7xx_hal_crc.h"
+#else
+#error "Architecture is not supported"
+#endif
+
 
 class HardwareCRC32
 {
