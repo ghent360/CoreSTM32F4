@@ -1,5 +1,6 @@
 CORE_DIR = $(CORESTM_DIR)
 VARIANT ?= BIGTREE_SKR_PRO_1v1
+VARIANT_CORE ?= STM32F4
 
 #Core
 CORE_SRC_DIRS  = \
@@ -16,13 +17,27 @@ CORE_SRC_DIRS += \
 	system/Middlewares/ST/STM32_USB_Device_Library/Core/Inc \
 	system/Middlewares/ST/STM32_USB_Device_Library/Core/Src
 
-CORE_SRC_DIRS += \
+CORE_F4_SRC_DIRS = \
 	system/STM32F4xx \
 	system/Drivers/CMSIS/Device/ST/STM32F4xx/Include \
 	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc \
 	system/Drivers/CMSIS/Device/ST/STM32F4xx/Source \
 	system/Drivers/STM32F4xx_HAL_Driver/Inc \
 	system/Drivers/STM32F4xx_HAL_Driver/Src
+
+CORE_F7_SRC_DIRS = \
+	system/STM32F7xx \
+	system/Drivers/CMSIS/Device/ST/STM32F7xx/Include \
+	system/Drivers/CMSIS/Device/ST/STM32F7xx/Source/Templates/gcc \
+	system/Drivers/CMSIS/Device/ST/STM32F7xx/Source \
+	system/Drivers/STM32F7xx_HAL_Driver/Inc \
+	system/Drivers/STM32F7xx_HAL_Driver/Src
+
+ifeq ($(VARIANT_CORE), STM32F4)
+CORE_SRC_DIRS += $(CORE_F4_SRC_DIRS)
+else
+CORE_SRC_DIRS += $(CORE_F7_SRC_DIRS)
+endif
 
 CORE_SRC_DIRS += \
 	CMSIS/CMSIS/Core/Include \

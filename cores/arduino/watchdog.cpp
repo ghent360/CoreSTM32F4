@@ -17,8 +17,16 @@
 */
 
 #include "watchdog.h"
+#if defined(STM32F4)
 #include "stm32f4xx_hal_rcc.h"
 #include "stm32f4xx_hal_wwdg.h"
+#elif defined(STM32F7)
+#include "stm32f7xx_hal_rcc.h"
+#include "stm32f7xx_hal_wwdg.h"
+#else
+#error "Architecture not supported"
+#endif
+
 
 extern "C" {
 

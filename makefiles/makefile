@@ -13,6 +13,12 @@ NETWORK ?= ESP8266WIFI
 
 TMC22XX ?= true
 
+ifeq ($(VARIANT), NUCLEO_F767ZI)
+VARIANT_CORE = STM32F7
+else
+VARIANT_CORE = STM32F4
+endif
+
 #STARTUP_DELAY ?= -DSTARTUP_DELAY=10000
 
 #Comment out to show compilation commands (verbose)
@@ -75,20 +81,28 @@ endif
 #	-DSTM32F407_5ZX \
 #	-DSTM32F4xx
 #
-#
-#	-DSTM32F7 \
-#	-DSTM32F767xx \
-#	-DSTM32F7xx \
+FLAGS_F7 = \
+	-DSTM32F7 \
+	-DSTM32F767xx \
+	-DSTM32F7xx
 
-FLAGS  = \
-	-D__$(PROCESSOR)__ \
-	-D_XOPEN_SOURCE \
+FLAGS_F4 = \
 	-DSTM32F4 \
 	-DSTM32F407xx \
 	-DSTM32F4xx \
 	-DSTM32F40_41xxx \
-	-DSTM32F407_5ZX \
+	-DSTM32F407_5ZX
+
+FLAGS  = \
+	-D__$(PROCESSOR)__ \
+	-D_XOPEN_SOURCE \
 	-DNOEXCEPT=noexcept
+
+ifeq ($(VARIANT_CORE), STM32F7)
+FLAGS += $(FLAGS_F7)
+else
+FLAGS += $(FLAGS_F4)
+endif
 
 # UART configuration
 FLAGS  += \

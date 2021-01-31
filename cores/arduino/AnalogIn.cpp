@@ -18,7 +18,13 @@ Total time for for 16 channels 47*16 = 750uS or approx 1333 full samples per sec
 */
 #include "Core.h"
 #include "AnalogIn.h"
+#if defined(STM32F4)
 #include "stm32f4xx_hal_rcc.h"
+#elif defined(STM32F7)
+#include "stm32f7xx_hal_rcc.h"
+#else
+#error "Architecture not supported"
+#endif
 
 extern "C" void debugPrintf(const char* fmt, ...) __attribute__ ((format (printf, 1, 2)));
 
