@@ -75,6 +75,7 @@ bool HardwareSPI::waitForTxEmpty() NOEXCEPT
 extern "C" void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) NOEXCEPT
 {
     // Get pointer to containing object
+    __HAL_SPI_DISABLE(hspi);
     HardwareSPI *s = (HardwareSPI *)((uint8_t *)hspi - ((uint8_t *)&(HardwareSPI::SSP1.spi.handle) - (uint8_t *)&HardwareSPI::SSP1));
     if (s->callback) s->callback(s);    
 }
@@ -83,6 +84,7 @@ extern "C" void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) NOEXCEPT
 {
     // Get pointer to containing object 
     HardwareSPI *s = (HardwareSPI *)((uint8_t *)hspi - ((uint8_t *)&(HardwareSPI::SSP1.spi.handle) - (uint8_t *)&HardwareSPI::SSP1));
+    __HAL_SPI_DISABLE(hspi);
     if (s->callback) s->callback(s);    
 }    
 
