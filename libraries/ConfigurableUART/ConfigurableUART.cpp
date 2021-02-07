@@ -14,7 +14,6 @@ ConfigurableUART::ConfigurableUART() NOEXCEPT
 {
 }
 
-
 enum uartPinDirection_t:uint8_t
 {
     TX = 0,
@@ -275,7 +274,6 @@ bool ConfigurableUART::IsConnected() NOEXCEPT
     if(serialPort != nullptr) return true;
     return false;
 }
-
 
 // FIXME we should probbaly implement the call back for this!
 ConfigurableUART::InterruptCallbackFn ConfigurableUART::SetInterruptCallback(InterruptCallbackFn f) NOEXCEPT

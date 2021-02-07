@@ -9,9 +9,6 @@
 #include "Stream.h"
 #include "Print.h"
 
-
-
-
 class ConfigurableUART : public Stream
 {
 

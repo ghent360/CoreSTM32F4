@@ -10,15 +10,6 @@
 
 #include "HardwareCRC32.h"
 
-#if defined(STM32F4xx)
-#include "stm32f4xx_hal_rcc_ex.h"
-#elif defined STM32F7xx
-#include "stm32f7xx_hal_rcc_ex.h"
-#else
-#error "Architecture is not supported"
-#endif
-
-
 // Original code
 #if 0
 void
