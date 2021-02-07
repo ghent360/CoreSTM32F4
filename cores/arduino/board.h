@@ -11,6 +11,7 @@
 #include "digital_io.h"
 #include "dwt.h"
 #include "hw_config.h"
+#include "otp.h"
 #include "timer.h"
 #include "uart.h"
 

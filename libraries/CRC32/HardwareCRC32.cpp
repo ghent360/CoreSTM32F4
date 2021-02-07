@@ -89,7 +89,7 @@ HardwareCRC32 HWCRC32(CRC);
 HardwareCRC32::HardwareCRC32(CRC_TypeDef *Instance) noexcept : inst(Instance)
 {
     // make sure the hardware has power
-    //__HAL_RCC_CRC_CLK_ENABLE();
+    __HAL_RCC_CRC_CLK_ENABLE();
 }
 
 uint32_t inline HardwareCRC32::Calc(const uint8_t val, const uint32_t crc) noexcept
