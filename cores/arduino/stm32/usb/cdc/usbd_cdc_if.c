@@ -289,8 +289,9 @@ void CDC_deInit(void)
     USBD_Stop(&hUSBD_Device_CDC);
     USBD_CDC_DeInit();
     USBD_DeInit(&hUSBD_Device_CDC);
-    if (hUSBD_Device_CDC.pPreAllocatedClassData != NULL)
+    if (hUSBD_Device_CDC.pPreAllocatedClassData != NULL) {
       USBD_free(hUSBD_Device_CDC.pPreAllocatedClassData);
+    }
     CDC_initialized = false;
   }
 }

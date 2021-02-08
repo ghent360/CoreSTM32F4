@@ -17,7 +17,6 @@
 */
 
 #include "watchdog.h"
-
 #include "stm32_def.h"
 
 extern "C" {

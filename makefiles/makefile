@@ -50,7 +50,7 @@ ifeq ($(BUILD),Debug)
 	DEBUG_FLAGS = -Os -g -DSTM32_DEBUG -DDEBUG_IRQ_HANDLERS $(STARTUP_DELAY)
     $(info - Build: Debug) 
 else
-	DEBUG_FLAGS = -Os
+	DEBUG_FLAGS = -Os -g
     $(info - Build: Release)
 endif
 	
@@ -67,7 +67,8 @@ VARIANT_DEFINES = \
 	-DARDUINO_PRNTR_V2 \
 	-DUSB_PRODUCT=\"STM32F407VE\" \
 	-DBOARD_NAME=\"PRNTR_Vx\" \
-	-DVECT_TAB_OFFSET=0x8000
+	-DVECT_TAB_OFFSET=0x8000 \
+	-DUSBD_FIXED_PULLUP
 else ifeq ($(VARIANT), NUCLEO_F767ZI)
 VARIANT_DEFINES = \
 	-DARDUINO_NUCLEO_F767ZI \
@@ -80,15 +81,8 @@ endif
 
 #Flags common for Core in c and c++
 #FLAGS  = \
-#	-D__$(PROCESSOR)__ \
-#	-D_XOPEN_SOURCE \
 #	-DENABLE_UART3 \
-#	-DSTM32F4 \
-#	-DSTM32F407xx \
-#	-DSTM32F40_41xxx \
-#	-DSTM32F407_5ZX \
-#	-DSTM32F4xx
-#
+
 FLAGS_F7 = \
 	-DSTM32F7 \
 	-DSTM32F767xx \
@@ -131,6 +125,7 @@ FLAGS += \
 	-DUSBD_USE_CDC \
 	-DUSBD_VID=0 \
 	-DUSBD_PID=0 \
+	-DUSB_MANUFACTURER_STRING="\"PRNTR Board V2\""
 	-DTIM_IRQ_PRIO=13
 
 FLAGS += \
@@ -267,6 +262,7 @@ $(BUILD_DIR)/$(OUTPUT_NAME).elf: $(BUILD_DIR)/libSTMCore.a $(BUILD_DIR)/libRRFLi
 		-z \
 		-Xlinker muldefs \
 		-Os \
+		-g \
 		-Wl,--fatal-warnings \
 		-fmerge-all-constants \
 		-mfpu=fpv4-sp-d16 \

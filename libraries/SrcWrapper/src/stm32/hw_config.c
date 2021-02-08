@@ -43,7 +43,7 @@ void hw_config_init(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-#if defined (USBCON) && defined(USBD_USE_CDC) && !defined(RTOS)
+#if defined (USBCON) && defined(USBD_USE_CDC)
   USBD_CDC_init();
 #endif
 }
